@@ -9,8 +9,8 @@ import (
 	"runtime"
 
 	iotago "github.com/iotaledger/iota.go/v3"
-	wasp_wallet_sdk "github.com/nnikolash/wasp-types-exported-wallet-sdk"
-	"github.com/nnikolash/wasp-types-exported-wallet-sdk/types"
+	wasp_wallet_sdk "github.com/iotaledger/wasp-wallet-sdk"
+	"github.com/iotaledger/wasp-wallet-sdk/types"
 	"github.com/nnikolash/wasp-types-exported/packages/cryptolib"
 	"github.com/nnikolash/wasp-types-exported/tools/wasp-cli/cli/config"
 	"github.com/nnikolash/wasp-types-exported/tools/wasp-cli/cli/wallet/providers"

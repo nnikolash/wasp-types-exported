@@ -386,8 +386,8 @@ github.com/iotaledger/iota.go v1.0.0 h1:tqm1FxJ/zOdzbrAaQ5BQpVF8dUy2eeGlSeWlNG8G
 github.com/iotaledger/iota.go v1.0.0/go.mod h1:RiKYwDyY7aCD1L0YRzHSjOsJ5mUR9yvQpvhZncNcGQI=
 github.com/iotaledger/iota.go/v3 v3.0.0-rc.3 h1:/2gH+AlsWX2T7f4uHvD7oAHmPRsW+SkjR29txzqpi5M=
 github.com/iotaledger/iota.go/v3 v3.0.0-rc.3/go.mod h1:R3m6d5AFI0I++HOaYQR7QU8hY//vUSwbOyqQ7Bco2O4=
-github.com/nnikolash/wasp-types-exported-wallet-sdk v0.0.0-20240320120018-8416b148aa8b h1:jlwujQtgJVIO6j39feJJnrkuLidiSHq6vltAFyJcu+Y=
-github.com/nnikolash/wasp-types-exported-wallet-sdk v0.0.0-20240320120018-8416b148aa8b/go.mod h1:kZwHqnxnydLbgBMDzQfiMLSTtq9S4n3/tkpN8KjXZOY=
+github.com/iotaledger/wasp-wallet-sdk v0.0.0-20240320120018-8416b148aa8b h1:jlwujQtgJVIO6j39feJJnrkuLidiSHq6vltAFyJcu+Y=
+github.com/iotaledger/wasp-wallet-sdk v0.0.0-20240320120018-8416b148aa8b/go.mod h1:kZwHqnxnydLbgBMDzQfiMLSTtq9S4n3/tkpN8KjXZOY=
 github.com/ipfs/go-cid v0.4.1 h1:A/T3qGvxi4kpKWWcPC/PgbvDA2bjVLO7n4UeVwnbs/s=
 github.com/ipfs/go-cid v0.4.1/go.mod h1:uQHwDeX4c6CtyrFwdqyhpNcxVewur1M7l7fNU7LKwZk=
 github.com/ipfs/go-detect-race v0.0.1 h1:qX/xay2W3E4Q1U7d9lNs1sU9nvguX0a7319XbyQ6cOk=

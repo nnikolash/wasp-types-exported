@@ -3,7 +3,7 @@ package providers
 import (
 	"os"
 
-	walletsdk "github.com/nnikolash/wasp-types-exported-wallet-sdk"
+	walletsdk "github.com/iotaledger/wasp-wallet-sdk"
 	"github.com/nnikolash/wasp-types-exported/packages/parameters"
 	"github.com/nnikolash/wasp-types-exported/tools/wasp-cli/cli/wallet/wallets"
 	"github.com/nnikolash/wasp-types-exported/tools/wasp-cli/log"

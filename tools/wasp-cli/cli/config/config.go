@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 
 	iotago "github.com/iotaledger/iota.go/v3"
-	"github.com/nnikolash/wasp-types-exported-wallet-sdk/types"
+	"github.com/iotaledger/wasp-wallet-sdk/types"
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/parameters"
 	"github.com/nnikolash/wasp-types-exported/packages/testutil/privtangle/privtangledefaults"

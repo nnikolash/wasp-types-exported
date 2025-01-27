@@ -2,7 +2,7 @@ package wallets
 
 import (
 	iotago "github.com/iotaledger/iota.go/v3"
-	"github.com/nnikolash/wasp-types-exported-wallet-sdk/types"
+	"github.com/iotaledger/wasp-wallet-sdk/types"
 )
 
 func SDKED25519SignatureToIOTAGo(responseSignature *types.Ed25519Signature) (iotago.Signature, error) {

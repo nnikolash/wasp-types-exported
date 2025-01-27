@@ -16,8 +16,8 @@ require (
 	github.com/hashicorp/go-version v1.7.0
 	github.com/iotaledger/hive.go/logger v0.0.0-20240319170702-c7591bb5f9f2
 	github.com/iotaledger/iota.go/v3 v3.0.0-rc.3
+	github.com/iotaledger/wasp-wallet-sdk v0.0.0-20240320120018-8416b148aa8b
 	github.com/nnikolash/wasp-types-exported v1.0.0-00010101000000-000000000000
-	github.com/nnikolash/wasp-types-exported-wallet-sdk v0.0.0-20240320120018-8416b148aa8b
 	github.com/samber/lo v1.46.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0

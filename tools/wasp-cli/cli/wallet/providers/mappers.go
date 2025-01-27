@@ -2,7 +2,7 @@ package providers
 
 import (
 	iotago "github.com/iotaledger/iota.go/v3"
-	"github.com/nnikolash/wasp-types-exported-wallet-sdk/types"
+	"github.com/iotaledger/wasp-wallet-sdk/types"
 )
 
 func MapCoinType(prefix iotago.NetworkPrefix) types.CoinType {

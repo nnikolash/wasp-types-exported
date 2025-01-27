@@ -8,7 +8,7 @@ import (
 	"github.com/awnumar/memguard"
 	"github.com/tyler-smith/go-bip39"
 
-	walletsdk "github.com/nnikolash/wasp-types-exported-wallet-sdk"
+	walletsdk "github.com/iotaledger/wasp-wallet-sdk"
 	"github.com/nnikolash/wasp-types-exported/packages/cryptolib"
 	"github.com/nnikolash/wasp-types-exported/packages/parameters"
 	"github.com/nnikolash/wasp-types-exported/tools/wasp-cli/cli"
