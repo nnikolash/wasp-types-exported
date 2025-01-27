@@ -8,31 +8,31 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/util/rwutil"
 )
 
-// foundryOutputRec contains information to reconstruct output
-type foundryOutputRec struct {
+// FoundryOutputRec contains information to reconstruct output
+type FoundryOutputRec struct {
 	OutputID    iotago.OutputID
 	Amount      uint64 // always storage deposit
 	TokenScheme iotago.TokenScheme
 	Metadata    []byte
 }
 
-func (rec *foundryOutputRec) Bytes() []byte {
+func (rec *FoundryOutputRec) Bytes() []byte {
 	return rwutil.WriteToBytes(rec)
 }
 
-func foundryOutputRecFromBytes(data []byte) (*foundryOutputRec, error) {
-	return rwutil.ReadFromBytes(data, new(foundryOutputRec))
+func FoundryOutputRecFromBytes(data []byte) (*FoundryOutputRec, error) {
+	return rwutil.ReadFromBytes(data, new(FoundryOutputRec))
 }
 
-func mustFoundryOutputRecFromBytes(data []byte) *foundryOutputRec {
-	ret, err := foundryOutputRecFromBytes(data)
+func MustFoundryOutputRecFromBytes(data []byte) *FoundryOutputRec {
+	ret, err := FoundryOutputRecFromBytes(data)
 	if err != nil {
 		panic(err)
 	}
 	return ret
 }
 
-func (rec *foundryOutputRec) Read(r io.Reader) error {
+func (rec *FoundryOutputRec) Read(r io.Reader) error {
 	rr := rwutil.NewReader(r)
 	rr.ReadN(rec.OutputID[:])
 	rec.Amount = rr.ReadUint64()
@@ -44,7 +44,7 @@ func (rec *foundryOutputRec) Read(r io.Reader) error {
 	return rr.Err
 }
 
-func (rec *foundryOutputRec) Write(w io.Writer) error {
+func (rec *FoundryOutputRec) Write(w io.Writer) error {
 	ww := rwutil.NewWriter(w)
 	ww.WriteN(rec.OutputID[:])
 	ww.WriteUint64(rec.Amount)

@@ -22,7 +22,7 @@ func nativeTokenOutputMapR(state kv.KVStoreReader) *collections.ImmutableMap {
 
 // SaveNativeTokenOutput map nativeTokenID -> foundryRec
 func SaveNativeTokenOutput(state kv.KVStore, out *iotago.BasicOutput, outputIndex uint16) {
-	tokenRec := nativeTokenOutputRec{
+	tokenRec := NativeTokenOutputRec{
 		// TransactionID is unknown yet, will be filled next block
 		OutputID:          iotago.OutputIDFromTransactionIDAndIndex(iotago.TransactionID{}, outputIndex),
 		StorageBaseTokens: out.Amount,
@@ -38,7 +38,7 @@ func updateNativeTokenOutputIDs(state kv.KVStore, anchorTxID iotago.TransactionI
 	n := newNativeTokens.Len()
 	for i := uint32(0); i < n; i++ {
 		k := newNativeTokens.GetAt(i)
-		rec := mustNativeTokenOutputRecFromBytes(allNativeTokens.GetAt(k))
+		rec := MustNativeTokenOutputRecFromBytes(allNativeTokens.GetAt(k))
 		rec.OutputID = iotago.OutputIDFromTransactionIDAndIndex(anchorTxID, rec.OutputID.Index())
 		allNativeTokens.SetAt(k, rec.Bytes())
 	}
@@ -54,7 +54,7 @@ func GetNativeTokenOutput(state kv.KVStoreReader, nativeTokenID iotago.NativeTok
 	if data == nil {
 		return nil, iotago.OutputID{}
 	}
-	tokenRec := mustNativeTokenOutputRecFromBytes(data)
+	tokenRec := MustNativeTokenOutputRecFromBytes(data)
 	ret := &iotago.BasicOutput{
 		Amount: tokenRec.StorageBaseTokens,
 		NativeTokens: iotago.NativeTokens{{

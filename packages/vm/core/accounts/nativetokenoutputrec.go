@@ -9,34 +9,34 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/util/rwutil"
 )
 
-type nativeTokenOutputRec struct {
+type NativeTokenOutputRec struct {
 	OutputID          iotago.OutputID
 	Amount            *big.Int
 	StorageBaseTokens uint64 // always storage deposit
 }
 
-func nativeTokenOutputRecFromBytes(data []byte) (*nativeTokenOutputRec, error) {
-	return rwutil.ReadFromBytes(data, new(nativeTokenOutputRec))
+func NativeTokenOutputRecFromBytes(data []byte) (*NativeTokenOutputRec, error) {
+	return rwutil.ReadFromBytes(data, new(NativeTokenOutputRec))
 }
 
-func mustNativeTokenOutputRecFromBytes(data []byte) *nativeTokenOutputRec {
-	ret, err := nativeTokenOutputRecFromBytes(data)
+func MustNativeTokenOutputRecFromBytes(data []byte) *NativeTokenOutputRec {
+	ret, err := NativeTokenOutputRecFromBytes(data)
 	if err != nil {
 		panic(err)
 	}
 	return ret
 }
 
-func (rec *nativeTokenOutputRec) Bytes() []byte {
+func (rec *NativeTokenOutputRec) Bytes() []byte {
 	return rwutil.WriteToBytes(rec)
 }
 
-func (rec *nativeTokenOutputRec) String() string {
+func (rec *NativeTokenOutputRec) String() string {
 	return fmt.Sprintf("Native Token Account: base tokens: %d, amount: %d, outID: %s",
 		rec.StorageBaseTokens, rec.Amount, rec.OutputID)
 }
 
-func (rec *nativeTokenOutputRec) Read(r io.Reader) error {
+func (rec *NativeTokenOutputRec) Read(r io.Reader) error {
 	rr := rwutil.NewReader(r)
 	rr.ReadN(rec.OutputID[:])
 	rec.Amount = rr.ReadUint256()
@@ -44,7 +44,7 @@ func (rec *nativeTokenOutputRec) Read(r io.Reader) error {
 	return rr.Err
 }
 
-func (rec *nativeTokenOutputRec) Write(w io.Writer) error {
+func (rec *NativeTokenOutputRec) Write(w io.Writer) error {
 	ww := rwutil.NewWriter(w)
 	ww.WriteN(rec.OutputID[:])
 	ww.WriteUint256(rec.Amount)

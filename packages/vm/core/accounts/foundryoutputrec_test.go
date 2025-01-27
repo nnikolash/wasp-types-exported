@@ -9,7 +9,7 @@ import (
 )
 
 func TestFoundryOutputRecSerialization(t *testing.T) {
-	o := foundryOutputRec{
+	o := FoundryOutputRec{
 		OutputID: iotago.OutputID{1, 2, 3},
 		Amount:   300,
 		TokenScheme: &iotago.SimpleTokenScheme{
@@ -19,6 +19,6 @@ func TestFoundryOutputRecSerialization(t *testing.T) {
 		},
 		Metadata: []byte("Tralala"),
 	}
-	rwutil.ReadWriteTest(t, &o, new(foundryOutputRec))
-	rwutil.BytesTest(t, &o, foundryOutputRecFromBytes)
+	rwutil.ReadWriteTest(t, &o, new(FoundryOutputRec))
+	rwutil.BytesTest(t, &o, FoundryOutputRecFromBytes)
 }
