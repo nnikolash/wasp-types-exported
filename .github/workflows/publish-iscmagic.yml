@@ -1,0 +1,31 @@
+name: Publish @iota/iscmagic
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/vm/core/evm/iscmagic
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          registry-url: "https://registry.npmjs.org"
+          scope: iota
+      - run: find . -type f -name "*.abi" -exec bash -c 'mv "$0" "${0%.abi}.json"' {} \;
+      - run: npm version ${{ inputs.version }}
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

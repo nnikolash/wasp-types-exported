@@ -1,0 +1,23 @@
+{
+  "name": "@iota/iscutils",
+  "version": "0.0.0",
+  "description": "The iscutils package contains various utility methods to simplify the interaction with the IOTA Magic contract.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nnikolash/wasp-types-exported.git",
+    "directory": "tools/evm/iscutils"
+  },
+  "keywords": [
+    "iscutils",
+    "wasp",
+    "solidity",
+    "evm",
+    "isc"
+  ],
+  "author": "Iota Smart Contracts",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/nnikolash/wasp-types-exported/issues"
+  },
+  "homepage": "https://github.com/nnikolash/wasp-types-exported/blob/develop/tools/evm/iscutils/README.md"
+}
