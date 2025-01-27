@@ -6,16 +6,16 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/kv/collections"
 )
 
-func newNFTsArray(state kv.KVStore) *collections.Array {
-	return collections.NewArray(state, keyNewNFTs)
+func NewNFTsArray(state kv.KVStore) *collections.Array {
+	return collections.NewArray(state, KeyNewNFTs)
 }
 
 func NFTOutputMap(state kv.KVStore) *collections.Map {
-	return collections.NewMap(state, keyNFTOutputRecords)
+	return collections.NewMap(state, KeyNFTOutputRecords)
 }
 
-func nftOutputMapR(state kv.KVStoreReader) *collections.ImmutableMap {
-	return collections.NewMapReadOnly(state, keyNFTOutputRecords)
+func NftOutputMapR(state kv.KVStoreReader) *collections.ImmutableMap {
+	return collections.NewMapReadOnly(state, KeyNFTOutputRecords)
 }
 
 func SaveNFTOutput(state kv.KVStore, out *iotago.NFTOutput, outputIndex uint16) {
@@ -25,11 +25,11 @@ func SaveNFTOutput(state kv.KVStore, out *iotago.NFTOutput, outputIndex uint16) 
 		Output:   out,
 	}
 	NFTOutputMap(state).SetAt(out.NFTID[:], tokenRec.Bytes())
-	newNFTsArray(state).Push(out.NFTID[:])
+	NewNFTsArray(state).Push(out.NFTID[:])
 }
 
 func updateNFTOutputIDs(state kv.KVStore, anchorTxID iotago.TransactionID) {
-	newNFTs := newNFTsArray(state)
+	newNFTs := NewNFTsArray(state)
 	allNFTs := NFTOutputMap(state)
 	n := newNFTs.Len()
 	for i := uint32(0); i < n; i++ {
@@ -46,7 +46,7 @@ func DeleteNFTOutput(state kv.KVStore, nftID iotago.NFTID) {
 }
 
 func GetNFTOutput(state kv.KVStoreReader, nftID iotago.NFTID) (*iotago.NFTOutput, iotago.OutputID) {
-	data := nftOutputMapR(state).GetAt(nftID[:])
+	data := NftOutputMapR(state).GetAt(nftID[:])
 	if data == nil {
 		return nil, iotago.OutputID{}
 	}

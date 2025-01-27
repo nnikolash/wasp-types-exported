@@ -8,24 +8,24 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/kv/collections"
 )
 
-func newFoundriesArray(state kv.KVStore) *collections.Array {
-	return collections.NewArray(state, keyNewFoundries)
+func NewFoundriesArray(state kv.KVStore) *collections.Array {
+	return collections.NewArray(state, KeyNewFoundries)
 }
 
-func accountFoundriesMap(state kv.KVStore, agentID isc.AgentID) *collections.Map {
-	return collections.NewMap(state, foundriesMapKey(agentID))
+func AccountFoundriesMap(state kv.KVStore, agentID isc.AgentID) *collections.Map {
+	return collections.NewMap(state, FoundriesMapKey(agentID))
 }
 
-func accountFoundriesMapR(state kv.KVStoreReader, agentID isc.AgentID) *collections.ImmutableMap {
-	return collections.NewMapReadOnly(state, foundriesMapKey(agentID))
+func AccountFoundriesMapR(state kv.KVStoreReader, agentID isc.AgentID) *collections.ImmutableMap {
+	return collections.NewMapReadOnly(state, FoundriesMapKey(agentID))
 }
 
 func AllFoundriesMap(state kv.KVStore) *collections.Map {
-	return collections.NewMap(state, keyFoundryOutputRecords)
+	return collections.NewMap(state, KeyFoundryOutputRecords)
 }
 
-func allFoundriesMapR(state kv.KVStoreReader) *collections.ImmutableMap {
-	return collections.NewMapReadOnly(state, keyFoundryOutputRecords)
+func AllFoundriesMapR(state kv.KVStoreReader) *collections.ImmutableMap {
+	return collections.NewMapReadOnly(state, KeyFoundryOutputRecords)
 }
 
 // SaveFoundryOutput stores foundry output into the map of all foundry outputs (compressed form)
@@ -43,11 +43,11 @@ func SaveFoundryOutput(state kv.KVStore, f *iotago.FoundryOutput, outputIndex ui
 	}
 
 	AllFoundriesMap(state).SetAt(codec.EncodeUint32(f.SerialNumber), foundryRec.Bytes())
-	newFoundriesArray(state).Push(codec.EncodeUint32(f.SerialNumber))
+	NewFoundriesArray(state).Push(codec.EncodeUint32(f.SerialNumber))
 }
 
 func updateFoundryOutputIDs(state kv.KVStore, anchorTxID iotago.TransactionID) {
-	newFoundries := newFoundriesArray(state)
+	newFoundries := NewFoundriesArray(state)
 	allFoundries := AllFoundriesMap(state)
 	n := newFoundries.Len()
 	for i := uint32(0); i < n; i++ {
@@ -66,7 +66,7 @@ func DeleteFoundryOutput(state kv.KVStore, sn uint32) {
 
 // GetFoundryOutput returns foundry output, its block number and output index
 func GetFoundryOutput(state kv.KVStoreReader, sn uint32, chainID isc.ChainID) (*iotago.FoundryOutput, iotago.OutputID) {
-	data := allFoundriesMapR(state).GetAt(codec.EncodeUint32(sn))
+	data := AllFoundriesMapR(state).GetAt(codec.EncodeUint32(sn))
 	if data == nil {
 		return nil, iotago.OutputID{}
 	}
@@ -94,13 +94,13 @@ func GetFoundryOutput(state kv.KVStoreReader, sn uint32, chainID isc.ChainID) (*
 
 // hasFoundry checks if specific account owns the foundry
 func hasFoundry(state kv.KVStoreReader, agentID isc.AgentID, sn uint32) bool {
-	return accountFoundriesMapR(state, agentID).HasAt(codec.EncodeUint32(sn))
+	return AccountFoundriesMapR(state, agentID).HasAt(codec.EncodeUint32(sn))
 }
 
 // addFoundryToAccount adds new foundry to the foundries controlled by the account
 func addFoundryToAccount(state kv.KVStore, agentID isc.AgentID, sn uint32) {
 	key := codec.EncodeUint32(sn)
-	foundries := accountFoundriesMap(state, agentID)
+	foundries := AccountFoundriesMap(state, agentID)
 	if foundries.HasAt(key) {
 		panic(ErrRepeatingFoundrySerialNumber)
 	}
@@ -109,7 +109,7 @@ func addFoundryToAccount(state kv.KVStore, agentID isc.AgentID, sn uint32) {
 
 func deleteFoundryFromAccount(state kv.KVStore, agentID isc.AgentID, sn uint32) {
 	key := codec.EncodeUint32(sn)
-	foundries := accountFoundriesMap(state, agentID)
+	foundries := AccountFoundriesMap(state, agentID)
 	if !foundries.HasAt(key) {
 		panic(ErrFoundryNotFound)
 	}

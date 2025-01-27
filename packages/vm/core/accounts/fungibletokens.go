@@ -17,7 +17,7 @@ func CreditToAccount(v isc.SchemaVersion, state kv.KVStore, agentID isc.AgentID,
 	if assets == nil || assets.IsEmpty() {
 		return
 	}
-	creditToAccount(v, state, accountKey(agentID, chainID), assets)
+	creditToAccount(v, state, AccountKey(agentID, chainID), assets)
 	creditToAccount(v, state, L2TotalsAccount, assets)
 	touchAccount(state, agentID, chainID)
 }
@@ -53,7 +53,7 @@ func CreditToAccountFullDecimals(v isc.SchemaVersion, state kv.KVStore, agentID 
 	if !util.IsPositiveBigInt(amount) {
 		return
 	}
-	creditToAccountFullDecimals(v, state, accountKey(agentID, chainID), amount)
+	creditToAccountFullDecimals(v, state, AccountKey(agentID, chainID), amount)
 	creditToAccountFullDecimals(v, state, L2TotalsAccount, amount)
 	touchAccount(state, agentID, chainID)
 }
@@ -69,7 +69,7 @@ func DebitFromAccount(v isc.SchemaVersion, state kv.KVStore, agentID isc.AgentID
 	if assets == nil || assets.IsEmpty() {
 		return
 	}
-	if !debitFromAccount(v, state, accountKey(agentID, chainID), assets) {
+	if !debitFromAccount(v, state, AccountKey(agentID, chainID), assets) {
 		panic(fmt.Errorf("cannot debit (%s) from %s: %w", assets, agentID, ErrNotEnoughFunds))
 	}
 	if !debitFromAccount(v, state, L2TotalsAccount, assets) {
@@ -129,7 +129,7 @@ func DebitFromAccountFullDecimals(v isc.SchemaVersion, state kv.KVStore, agentID
 	if !util.IsPositiveBigInt(amount) {
 		return
 	}
-	if !debitFromAccountFullDecimals(v, state, accountKey(agentID, chainID), amount) {
+	if !debitFromAccountFullDecimals(v, state, AccountKey(agentID, chainID), amount) {
 		panic(fmt.Errorf("cannot debit (%s) from %s: %w", amount.String(), agentID, ErrNotEnoughFunds))
 	}
 
@@ -165,7 +165,7 @@ func getFungibleTokens(v isc.SchemaVersion, state kv.KVStoreReader, accountKey k
 
 // GetAccountFungibleTokens returns all fungible tokens belonging to the agentID on the state
 func GetAccountFungibleTokens(v isc.SchemaVersion, state kv.KVStoreReader, agentID isc.AgentID, chainID isc.ChainID) *isc.Assets {
-	return getFungibleTokens(v, state, accountKey(agentID, chainID))
+	return getFungibleTokens(v, state, AccountKey(agentID, chainID))
 }
 
 func GetTotalL2FungibleTokens(v isc.SchemaVersion, state kv.KVStoreReader) *isc.Assets {

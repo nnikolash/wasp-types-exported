@@ -29,7 +29,7 @@ func (sa *StateAccess) Nonce(agentID isc.AgentID, chainID isc.ChainID) uint64 {
 }
 
 func (sa *StateAccess) AccountExists(agentID isc.AgentID, chainID isc.ChainID) bool {
-	return accountExists(sa.state, agentID, chainID)
+	return AccountExists(sa.state, agentID, chainID)
 }
 
 // converts an account key from the accounts contract (shortform without chainID) to an AgentID

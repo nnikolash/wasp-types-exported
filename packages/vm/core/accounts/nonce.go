@@ -6,8 +6,8 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/kv/codec"
 )
 
-func nonceKey(callerAgentID isc.AgentID, chainID isc.ChainID) kv.Key {
-	return keyNonce + accountKey(callerAgentID, chainID)
+func NonceKey(callerAgentID isc.AgentID, chainID isc.ChainID) kv.Key {
+	return KeyNonce + AccountKey(callerAgentID, chainID)
 }
 
 // Nonce returns the "total request count" for an account (it's the AccountNonce that is expected in the next request)
@@ -15,7 +15,7 @@ func AccountNonce(state kv.KVStoreReader, callerAgentID isc.AgentID, chainID isc
 	if callerAgentID.Kind() == isc.AgentIDKindEthereumAddress {
 		panic("to get EVM nonce, call EVM contract")
 	}
-	data := state.Get(nonceKey(callerAgentID, chainID))
+	data := state.Get(NonceKey(callerAgentID, chainID))
 	if data == nil {
 		return 0
 	}
@@ -28,5 +28,5 @@ func IncrementNonce(state kv.KVStore, callerAgentID isc.AgentID, chainID isc.Cha
 		return
 	}
 	next := AccountNonce(state, callerAgentID, chainID)
-	state.Set(nonceKey(callerAgentID, chainID), codec.EncodeUint64(next))
+	state.Set(NonceKey(callerAgentID, chainID), codec.EncodeUint64(next))
 }

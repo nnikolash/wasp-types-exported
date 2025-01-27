@@ -15,14 +15,14 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/vm/core/evm"
 )
 
-type mintedNFTRecord struct {
+type MintedNFTRecord struct {
 	positionInMintedList uint16
 	outputIndex          uint16
 	owner                isc.AgentID
 	output               *iotago.NFTOutput
 }
 
-func (rec *mintedNFTRecord) Read(r io.Reader) error {
+func (rec *MintedNFTRecord) Read(r io.Reader) error {
 	rr := rwutil.NewReader(r)
 	rec.positionInMintedList = rr.ReadUint16()
 	rec.outputIndex = rr.ReadUint16()
@@ -32,7 +32,7 @@ func (rec *mintedNFTRecord) Read(r io.Reader) error {
 	return rr.Err
 }
 
-func (rec *mintedNFTRecord) Write(w io.Writer) error {
+func (rec *MintedNFTRecord) Write(w io.Writer) error {
 	ww := rwutil.NewWriter(w)
 	ww.WriteUint16(rec.positionInMintedList)
 	ww.WriteUint16(rec.outputIndex)
@@ -45,28 +45,28 @@ func (rec *mintedNFTRecord) Write(w io.Writer) error {
 	return ww.Err
 }
 
-func (rec *mintedNFTRecord) Bytes() []byte {
+func (rec *MintedNFTRecord) Bytes() []byte {
 	return rwutil.WriteToBytes(rec)
 }
 
-func mintedNFTRecordFromBytes(data []byte) *mintedNFTRecord {
-	record, err := rwutil.ReadFromBytes(data, new(mintedNFTRecord))
+func MintedNFTRecordFromBytes(data []byte) *MintedNFTRecord {
+	record, err := rwutil.ReadFromBytes(data, new(MintedNFTRecord))
 	if err != nil {
 		panic(err)
 	}
 	return record
 }
 
-func newlyMintedNFTsMap(state kv.KVStore) *collections.Map {
-	return collections.NewMap(state, prefixNewlyMintedNFTs)
+func NewlyMintedNFTsMap(state kv.KVStore) *collections.Map {
+	return collections.NewMap(state, PrefixNewlyMintedNFTs)
 }
 
-func mintIDMap(state kv.KVStore) *collections.Map {
-	return collections.NewMap(state, prefixMintIDMap)
+func MintIDMap(state kv.KVStore) *collections.Map {
+	return collections.NewMap(state, PrefixMintIDMap)
 }
 
-func mintIDMapR(state kv.KVStoreReader) *collections.ImmutableMap {
-	return collections.NewMapReadOnly(state, prefixMintIDMap)
+func MintIDMapR(state kv.KVStoreReader) *collections.ImmutableMap {
+	return collections.NewMapReadOnly(state, PrefixMintIDMap)
 }
 
 var (
@@ -157,14 +157,14 @@ func mintNFT(ctx isc.Sandbox) dict.Dict {
 	ctx.TransferAllowedFunds(ctx.AccountID(), isc.NewAssetsBaseTokens(nftOutput.Amount))                                          // claim tokens from allowance
 	DebitFromAccount(ctx.SchemaVersion(), ctx.State(), ctx.AccountID(), isc.NewAssetsBaseTokens(nftOutput.Amount), ctx.ChainID()) // debit from this SC account
 
-	rec := mintedNFTRecord{
+	rec := MintedNFTRecord{
 		positionInMintedList: positionInMintedList,
 		outputIndex:          0, // to be filled on block close by `SaveMintedNFTOutput`
 		owner:                params.ownerAgentID,
 		output:               nftOutput,
 	}
 	// save the info required to credit the NFT on next block
-	newlyMintedNFTsMap(ctx.State()).SetAt(codec.Encode(positionInMintedList), rec.Bytes())
+	NewlyMintedNFTsMap(ctx.State()).SetAt(codec.Encode(positionInMintedList), rec.Bytes())
 
 	// register the collection in the EVM
 	if !params.collectionID.Empty() {
@@ -193,7 +193,7 @@ func mintNFT(ctx isc.Sandbox) dict.Dict {
 
 func viewNFTIDbyMintID(ctx isc.SandboxView) dict.Dict {
 	internalMintID := ctx.Params().MustGetBytes(ParamMintID)
-	nftID := mintIDMapR(ctx.StateR()).GetAt(internalMintID)
+	nftID := MintIDMapR(ctx.StateR()).GetAt(internalMintID)
 	return dict.Dict{
 		ParamNFTID: nftID,
 	}
@@ -202,25 +202,25 @@ func viewNFTIDbyMintID(ctx isc.SandboxView) dict.Dict {
 // ----  output management
 
 func SaveMintedNFTOutput(state kv.KVStore, positionInMintedList, outputIndex uint16) {
-	mintMap := newlyMintedNFTsMap(state)
+	mintMap := NewlyMintedNFTsMap(state)
 	key := codec.Encode(positionInMintedList)
 	recBytes := mintMap.GetAt(key)
 	if recBytes == nil {
 		return
 	}
-	rec := mintedNFTRecordFromBytes(recBytes)
+	rec := MintedNFTRecordFromBytes(recBytes)
 	rec.outputIndex = outputIndex
 	mintMap.SetAt(key, rec.Bytes())
 }
 
 func updateNewlyMintedNFTOutputIDs(state kv.KVStore, anchorTxID iotago.TransactionID, blockIndex uint32) map[iotago.NFTID]isc.AgentID {
-	mintMap := newlyMintedNFTsMap(state)
+	mintMap := NewlyMintedNFTsMap(state)
 	nftMap := NFTOutputMap(state)
 	newNFTIDs := make(map[iotago.NFTID]isc.AgentID, 0)
 
 	// iterate the minted collection of NFT's that we're looking to co-relate with their NFTIDs
 	mintMap.Iterate(func(_, recBytes []byte) bool {
-		mintedRec := mintedNFTRecordFromBytes(recBytes)
+		mintedRec := MintedNFTRecordFromBytes(recBytes)
 		// calculate the NFTID from the anchor txID	+ outputIndex
 		outputID := iotago.OutputIDFromTransactionIDAndIndex(anchorTxID, mintedRec.outputIndex)
 		nftID := iotago.NFTIDFromOutputID(outputID)
@@ -236,7 +236,7 @@ func updateNewlyMintedNFTOutputIDs(state kv.KVStore, anchorTxID iotago.Transacti
 			creditNFTToAccount(state, mintedRec.owner, nftID, mintedRec.output.ImmutableFeatureSet().IssuerFeature().Address)
 		}
 		// save the mapping of [mintID => NFTID]
-		mintIDMap(state).SetAt(mintID(blockIndex, mintedRec.positionInMintedList), nftID[:])
+		MintIDMap(state).SetAt(mintID(blockIndex, mintedRec.positionInMintedList), nftID[:])
 		newNFTIDs[nftID] = mintedRec.owner
 
 		return true

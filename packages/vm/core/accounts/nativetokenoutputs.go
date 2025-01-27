@@ -8,16 +8,16 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/kv/collections"
 )
 
-func newNativeTokensArray(state kv.KVStore) *collections.Array {
-	return collections.NewArray(state, keyNewNativeTokens)
+func NewNativeTokensArray(state kv.KVStore) *collections.Array {
+	return collections.NewArray(state, KeyNewNativeTokens)
 }
 
 func NativeTokenOutputMap(state kv.KVStore) *collections.Map {
-	return collections.NewMap(state, keyNativeTokenOutputMap)
+	return collections.NewMap(state, KeyNativeTokenOutputMap)
 }
 
-func nativeTokenOutputMapR(state kv.KVStoreReader) *collections.ImmutableMap {
-	return collections.NewMapReadOnly(state, keyNativeTokenOutputMap)
+func NativeTokenOutputMapR(state kv.KVStoreReader) *collections.ImmutableMap {
+	return collections.NewMapReadOnly(state, KeyNativeTokenOutputMap)
 }
 
 // SaveNativeTokenOutput map nativeTokenID -> foundryRec
@@ -29,11 +29,11 @@ func SaveNativeTokenOutput(state kv.KVStore, out *iotago.BasicOutput, outputInde
 		Amount:            out.NativeTokens[0].Amount,
 	}
 	NativeTokenOutputMap(state).SetAt(out.NativeTokens[0].ID[:], tokenRec.Bytes())
-	newNativeTokensArray(state).Push(out.NativeTokens[0].ID[:])
+	NewNativeTokensArray(state).Push(out.NativeTokens[0].ID[:])
 }
 
 func updateNativeTokenOutputIDs(state kv.KVStore, anchorTxID iotago.TransactionID) {
-	newNativeTokens := newNativeTokensArray(state)
+	newNativeTokens := NewNativeTokensArray(state)
 	allNativeTokens := NativeTokenOutputMap(state)
 	n := newNativeTokens.Len()
 	for i := uint32(0); i < n; i++ {
@@ -50,7 +50,7 @@ func DeleteNativeTokenOutput(state kv.KVStore, nativeTokenID iotago.NativeTokenI
 }
 
 func GetNativeTokenOutput(state kv.KVStoreReader, nativeTokenID iotago.NativeTokenID, chainID isc.ChainID) (*iotago.BasicOutput, iotago.OutputID) {
-	data := nativeTokenOutputMapR(state).GetAt(nativeTokenID[:])
+	data := NativeTokenOutputMapR(state).GetAt(nativeTokenID[:])
 	if data == nil {
 		return nil, iotago.OutputID{}
 	}

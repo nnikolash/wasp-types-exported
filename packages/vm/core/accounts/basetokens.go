@@ -46,7 +46,7 @@ func setBaseTokensFullDecimals(v isc.SchemaVersion) setBaseTokensFullDecimalsFn 
 // -------------------------------------------------------------------------------
 
 func BaseTokensKey(accountKey kv.Key) kv.Key {
-	return prefixBaseTokens + accountKey
+	return PrefixBaseTokens + accountKey
 }
 
 func getBaseTokensFullDecimalsNEW(state kv.KVStoreReader, accountKey kv.Key) *big.Int {
@@ -74,9 +74,9 @@ func AdjustAccountBaseTokens(v isc.SchemaVersion, state kv.KVStore, account isc.
 }
 
 func GetBaseTokensBalance(v isc.SchemaVersion, state kv.KVStoreReader, agentID isc.AgentID, chainID isc.ChainID) uint64 {
-	return getBaseTokens(v)(state, accountKey(agentID, chainID))
+	return getBaseTokens(v)(state, AccountKey(agentID, chainID))
 }
 
 func GetBaseTokensBalanceFullDecimals(v isc.SchemaVersion, state kv.KVStoreReader, agentID isc.AgentID, chainID isc.ChainID) *big.Int {
-	return GetBaseTokensFullDecimals(v)(state, accountKey(agentID, chainID))
+	return GetBaseTokensFullDecimals(v)(state, AccountKey(agentID, chainID))
 }
