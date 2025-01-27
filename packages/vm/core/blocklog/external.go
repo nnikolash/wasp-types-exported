@@ -100,7 +100,7 @@ type GetRequestReceiptResult struct {
 // returns nil if receipt was not found
 func GetRequestRecordDataByRequestID(stateReader kv.KVStoreReader, reqID isc.RequestID) (*GetRequestReceiptResult, error) {
 	lookupDigest := reqID.LookupDigest()
-	lookupTable := collections.NewMapReadOnly(stateReader, prefixRequestLookupIndex)
+	lookupTable := collections.NewMapReadOnly(stateReader, PrefixRequestLookupIndex)
 	lookupKeyListBin := lookupTable.GetAt(lookupDigest[:])
 	if lookupKeyListBin == nil {
 		return nil, nil
@@ -131,7 +131,7 @@ func GetRequestRecordDataByRequestID(stateReader kv.KVStoreReader, reqID isc.Req
 
 func GetEventsByBlockIndex(partition kv.KVStoreReader, blockIndex uint32, totalRequests uint16) [][]byte {
 	var ret [][]byte
-	events := collections.NewMapReadOnly(partition, prefixRequestEvents)
+	events := collections.NewMapReadOnly(partition, PrefixRequestEvents)
 	for reqIdx := uint16(0); reqIdx < totalRequests; reqIdx++ {
 		eventIndex := uint16(0)
 		for {

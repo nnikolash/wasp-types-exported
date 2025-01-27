@@ -10,8 +10,8 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/vm/core/errors/coreerrors"
 )
 
-func errorTemplateKey(contractID isc.Hname) string {
-	return prefixErrorTemplateMap + string(contractID.Bytes())
+func ErrorTemplateKey(contractID isc.Hname) string {
+	return PrefixErrorTemplateMap + string(contractID.Bytes())
 }
 
 // StateErrorCollectionWriter implements ErrorCollection. Is used for contract internal errors.
@@ -31,7 +31,7 @@ func NewStateErrorCollectionWriter(partition kv.KVStore, hname isc.Hname) coreer
 }
 
 func (e *StateErrorCollectionWriter) getErrorTemplateMap() *collections.Map {
-	return collections.NewMap(e.partition, errorTemplateKey(e.hname))
+	return collections.NewMap(e.partition, ErrorTemplateKey(e.hname))
 }
 
 func (e *StateErrorCollectionWriter) Get(errorID uint16) (*isc.VMErrorTemplate, bool) {
@@ -78,7 +78,7 @@ type StateErrorCollectionReader struct {
 }
 
 func (e *StateErrorCollectionReader) getErrorTemplateMap() *collections.ImmutableMap {
-	return collections.NewMapReadOnly(e.partition, errorTemplateKey(e.hname))
+	return collections.NewMapReadOnly(e.partition, ErrorTemplateKey(e.hname))
 }
 
 func NewStateErrorCollectionReader(partition kv.KVStoreReader, hname isc.Hname) coreerrors.ErrorCollection {

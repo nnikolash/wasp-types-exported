@@ -22,43 +22,43 @@ import (
 
 // The ISC magic contract stores some data in the ISC state.
 const (
-	// prefixPrivileged stores the directory of EVM contracts that have access to
+	// PrefixPrivileged stores the directory of EVM contracts that have access to
 	// the "privileged" ISC magic methods.
 	// Covered in: TestStorageContract
-	prefixPrivileged = "p"
-	// prefixAllowance stores the allowance between accounts (e.g. by calling
+	PrefixPrivileged = "p"
+	// PrefixAllowance stores the allowance between accounts (e.g. by calling
 	// ISC.allow() from solidity).
 	// Covered in: TestSendBaseTokens
-	prefixAllowance = "a"
-	// prefixERC20ExternalNativeTokens stores the directory of ERC20 contracts
+	PrefixAllowance = "a"
+	// PrefixERC20ExternalNativeTokens stores the directory of ERC20 contracts
 	// registered by calling ISC.registerERC20NativeToken() from solidity.
 	// Covered in: TestERC20NativeTokensWithExternalFoundry
-	prefixERC20ExternalNativeTokens = "e"
+	PrefixERC20ExternalNativeTokens = "e"
 )
 
 // directory of EVM contracts that have access to the privileged methods of ISC magic
-func keyPrivileged(addr common.Address) kv.Key {
-	return prefixPrivileged + kv.Key(addr.Bytes())
+func KeyPrivileged(addr common.Address) kv.Key {
+	return PrefixPrivileged + kv.Key(addr.Bytes())
 }
 
 func isCallerPrivileged(ctx isc.SandboxBase, addr common.Address) bool {
 	state := evm.ISCMagicSubrealmR(ctx.StateR())
-	return state.Has(keyPrivileged(addr))
+	return state.Has(KeyPrivileged(addr))
 }
 
 func addToPrivileged(evmState kv.KVStore, addr common.Address) {
 	state := evm.ISCMagicSubrealm(evmState)
-	state.Set(keyPrivileged(addr), []byte{1})
+	state.Set(KeyPrivileged(addr), []byte{1})
 }
 
 // allowance between two EVM accounts
-func keyAllowance(from, to common.Address) kv.Key {
-	return prefixAllowance + kv.Key(from.Bytes()) + kv.Key(to.Bytes())
+func KeyAllowance(from, to common.Address) kv.Key {
+	return PrefixAllowance + kv.Key(from.Bytes()) + kv.Key(to.Bytes())
 }
 
 func getAllowance(ctx isc.SandboxBase, from, to common.Address) *isc.Assets {
 	state := evm.ISCMagicSubrealmR(ctx.StateR())
-	key := keyAllowance(from, to)
+	key := KeyAllowance(from, to)
 	return isc.MustAssetsFromBytes(state.Get(key))
 }
 
@@ -97,7 +97,7 @@ func addToAllowance(ctx isc.Sandbox, from, to common.Address, add *isc.Assets) {
 
 func withAllowance(ctx isc.Sandbox, from, to common.Address, f func(*isc.Assets)) {
 	state := evm.ISCMagicSubrealm(ctx.State())
-	key := keyAllowance(from, to)
+	key := KeyAllowance(from, to)
 	allowance := isc.MustAssetsFromBytes(state.Get(key))
 	f(allowance)
 	state.Set(key, allowance.Bytes())
@@ -107,7 +107,7 @@ var errFundsNotAllowed = coreerrors.Register("remaining allowance insufficient")
 
 func subtractFromAllowance(ctx isc.Sandbox, from, to common.Address, taken *isc.Assets) {
 	state := evm.ISCMagicSubrealm(ctx.State())
-	key := keyAllowance(from, to)
+	key := KeyAllowance(from, to)
 	remaining := isc.MustAssetsFromBytes(state.Get(key))
 	if ok := remaining.Spend(taken); !ok {
 		panic(errFundsNotAllowed)
@@ -120,18 +120,18 @@ func subtractFromAllowance(ctx isc.Sandbox, from, to common.Address, taken *isc.
 }
 
 // directory of ERC20 contract addresses by native token ID
-func keyERC20ExternalNativeTokensAddress(nativeTokenID iotago.NativeTokenID) kv.Key {
-	return prefixERC20ExternalNativeTokens + kv.Key(nativeTokenID[:])
+func KeyERC20ExternalNativeTokensAddress(nativeTokenID iotago.NativeTokenID) kv.Key {
+	return PrefixERC20ExternalNativeTokens + kv.Key(nativeTokenID[:])
 }
 
 func addERC20ExternalNativeTokensAddress(ctx isc.Sandbox, nativeTokenID iotago.NativeTokenID, addr common.Address) {
 	state := evm.ISCMagicSubrealm(ctx.State())
-	state.Set(keyERC20ExternalNativeTokensAddress(nativeTokenID), addr.Bytes())
+	state.Set(KeyERC20ExternalNativeTokensAddress(nativeTokenID), addr.Bytes())
 }
 
 func getERC20ExternalNativeTokensAddress(ctx isc.SandboxBase, nativeTokenID iotago.NativeTokenID) (ret common.Address, ok bool) {
 	state := evm.ISCMagicSubrealmR(ctx.StateR())
-	b := state.Get(keyERC20ExternalNativeTokensAddress(nativeTokenID))
+	b := state.Get(KeyERC20ExternalNativeTokensAddress(nativeTokenID))
 	if b == nil {
 		return ret, false
 	}

@@ -19,5 +19,5 @@ const (
 )
 
 const (
-	prefixErrorTemplateMap = "a" // covered in: TestSuccessfulRegisterError
+	PrefixErrorTemplateMap = "a" // covered in: TestSuccessfulRegisterError
 )

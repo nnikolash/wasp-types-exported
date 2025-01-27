@@ -209,30 +209,30 @@ func (c *Index) TxsByBlockNumber(blockNumber *big.Int) types.Transactions {
 // internals
 
 const (
-	prefixLastBlockIndexed = iota
-	prefixBlockTrieRootByIndex
-	prefixBlockIndexByTxHash
-	prefixBlockIndexByHash
+	PrefixLastBlockIndexed = iota
+	PrefixBlockTrieRootByIndex
+	PrefixBlockIndexByTxHash
+	PrefixBlockIndexByHash
 )
 
-func keyLastBlockIndexed() kvstore.Key {
-	return []byte{prefixLastBlockIndexed}
+func KeyLastBlockIndexed() kvstore.Key {
+	return []byte{PrefixLastBlockIndexed}
 }
 
-func keyBlockTrieRootByIndex(i uint32) kvstore.Key {
-	key := []byte{prefixBlockTrieRootByIndex}
+func KeyBlockTrieRootByIndex(i uint32) kvstore.Key {
+	key := []byte{PrefixBlockTrieRootByIndex}
 	key = append(key, codec.EncodeUint32(i)...)
 	return key
 }
 
-func keyBlockIndexByTxHash(hash common.Hash) kvstore.Key {
-	key := []byte{prefixBlockIndexByTxHash}
+func KeyBlockIndexByTxHash(hash common.Hash) kvstore.Key {
+	key := []byte{PrefixBlockIndexByTxHash}
 	key = append(key, hash[:]...)
 	return key
 }
 
-func keyBlockIndexByHash(hash common.Hash) kvstore.Key {
-	key := []byte{prefixBlockIndexByHash}
+func KeyBlockIndexByHash(hash common.Hash) kvstore.Key {
+	key := []byte{PrefixBlockIndexByHash}
 	key = append(key, hash[:]...)
 	return key
 }
@@ -256,11 +256,11 @@ func (c *Index) set(key kvstore.Key, value []byte) {
 }
 
 func (c *Index) setLastBlockIndexed(n uint32) {
-	c.set(keyLastBlockIndexed(), codec.EncodeUint32(n))
+	c.set(KeyLastBlockIndexed(), codec.EncodeUint32(n))
 }
 
 func (c *Index) lastBlockIndexed() *uint32 {
-	bytes := c.get(keyLastBlockIndexed())
+	bytes := c.get(KeyLastBlockIndexed())
 	if bytes == nil {
 		return nil
 	}
@@ -269,11 +269,11 @@ func (c *Index) lastBlockIndexed() *uint32 {
 }
 
 func (c *Index) setBlockTrieRootByIndex(i uint32, hash trie.Hash) {
-	c.set(keyBlockTrieRootByIndex(i), hash.Bytes())
+	c.set(KeyBlockTrieRootByIndex(i), hash.Bytes())
 }
 
 func (c *Index) blockTrieRootByIndex(i uint32) *trie.Hash {
-	bytes := c.get(keyBlockTrieRootByIndex(i))
+	bytes := c.get(KeyBlockTrieRootByIndex(i))
 	if bytes == nil {
 		return nil
 	}
@@ -285,11 +285,11 @@ func (c *Index) blockTrieRootByIndex(i uint32) *trie.Hash {
 }
 
 func (c *Index) setBlockIndexByTxHash(txHash common.Hash, blockIndex uint32) {
-	c.set(keyBlockIndexByTxHash(txHash), codec.EncodeUint32(blockIndex))
+	c.set(KeyBlockIndexByTxHash(txHash), codec.EncodeUint32(blockIndex))
 }
 
 func (c *Index) blockIndexByTxHash(txHash common.Hash) *uint32 {
-	bytes := c.get(keyBlockIndexByTxHash(txHash))
+	bytes := c.get(KeyBlockIndexByTxHash(txHash))
 	if bytes == nil {
 		return nil
 	}
@@ -298,11 +298,11 @@ func (c *Index) blockIndexByTxHash(txHash common.Hash) *uint32 {
 }
 
 func (c *Index) setBlockIndexByHash(hash common.Hash, blockIndex uint32) {
-	c.set(keyBlockIndexByHash(hash), codec.EncodeUint32(blockIndex))
+	c.set(KeyBlockIndexByHash(hash), codec.EncodeUint32(blockIndex))
 }
 
 func (c *Index) blockIndexByHash(hash common.Hash) *uint32 {
-	bytes := c.get(keyBlockIndexByHash(hash))
+	bytes := c.get(KeyBlockIndexByHash(hash))
 	if bytes == nil {
 		return nil
 	}

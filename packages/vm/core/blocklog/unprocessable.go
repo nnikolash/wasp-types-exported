@@ -50,16 +50,16 @@ func (rec *unprocessableRequestRecord) Write(w io.Writer) error {
 	return ww.Err
 }
 
-func newUnprocessableRequestsArray(state kv.KVStore) *collections.Array {
-	return collections.NewArray(state, prefixNewUnprocessableRequests)
+func NewUnprocessableRequestsArray(state kv.KVStore) *collections.Array {
+	return collections.NewArray(state, PrefixNewUnprocessableRequests)
 }
 
-func unprocessableMap(state kv.KVStore) *collections.Map {
-	return collections.NewMap(state, prefixUnprocessableRequests)
+func UnprocessableMap(state kv.KVStore) *collections.Map {
+	return collections.NewMap(state, PrefixUnprocessableRequests)
 }
 
-func unprocessableMapR(state kv.KVStoreReader) *collections.ImmutableMap {
-	return collections.NewMapReadOnly(state, prefixUnprocessableRequests)
+func UnprocessableMapR(state kv.KVStoreReader) *collections.ImmutableMap {
+	return collections.NewMapReadOnly(state, PrefixUnprocessableRequests)
 }
 
 // save request reference / address of the sender
@@ -69,13 +69,13 @@ func SaveUnprocessable(state kv.KVStore, req isc.OnLedgerRequest, blockIndex uin
 		outputID: iotago.OutputIDFromTransactionIDAndIndex(iotago.TransactionID{}, outputIndex),
 		req:      req,
 	}
-	unprocessableMap(state).SetAt(req.ID().Bytes(), rec.Bytes())
-	newUnprocessableRequestsArray(state).Push(req.ID().Bytes())
+	UnprocessableMap(state).SetAt(req.ID().Bytes(), rec.Bytes())
+	NewUnprocessableRequestsArray(state).Push(req.ID().Bytes())
 }
 
 func updateUnprocessableRequestsOutputID(state kv.KVStore, anchorTxID iotago.TransactionID) {
-	newReqs := newUnprocessableRequestsArray(state)
-	allReqs := unprocessableMap(state)
+	newReqs := NewUnprocessableRequestsArray(state)
+	allReqs := UnprocessableMap(state)
 	n := newReqs.Len()
 	for i := uint32(0); i < n; i++ {
 		k := newReqs.GetAt(i)
@@ -87,7 +87,7 @@ func updateUnprocessableRequestsOutputID(state kv.KVStore, anchorTxID iotago.Tra
 }
 
 func GetUnprocessable(state kv.KVStoreReader, reqID isc.RequestID) (req isc.Request, outputID iotago.OutputID, err error) {
-	recData := unprocessableMapR(state).GetAt(reqID.Bytes())
+	recData := UnprocessableMapR(state).GetAt(reqID.Bytes())
 	rec, err := unprocessableRequestRecordFromBytes(recData)
 	if err != nil {
 		return nil, iotago.OutputID{}, err
@@ -96,11 +96,11 @@ func GetUnprocessable(state kv.KVStoreReader, reqID isc.RequestID) (req isc.Requ
 }
 
 func HasUnprocessable(state kv.KVStoreReader, reqID isc.RequestID) bool {
-	return unprocessableMapR(state).HasAt(reqID.Bytes())
+	return UnprocessableMapR(state).HasAt(reqID.Bytes())
 }
 
 func RemoveUnprocessable(state kv.KVStore, reqID isc.RequestID) {
-	unprocessableMap(state).DelAt(reqID.Bytes())
+	UnprocessableMap(state).DelAt(reqID.Bytes())
 }
 
 // ---- entrypoints
@@ -142,7 +142,7 @@ func UnprocessableRequestsAddedInBlock(block state.Block) ([]isc.Request, error)
 	var respErr error
 	requests := []isc.Request{}
 	kvStore := subrealm.NewReadOnly(block.MutationsReader(), kv.Key(Contract.Hname().Bytes()))
-	unprocessableMapR(kvStore).Iterate(func(_, recData []byte) bool {
+	UnprocessableMapR(kvStore).Iterate(func(_, recData []byte) bool {
 		rec, err := unprocessableRequestRecordFromBytes(recData)
 		if err != nil {
 			respErr = err
@@ -156,7 +156,7 @@ func UnprocessableRequestsAddedInBlock(block state.Block) ([]isc.Request, error)
 
 func HasUnprocessableRequestBeenRemovedInBlock(block state.Block, requestID isc.RequestID) bool {
 	keyBytes := Contract.Hname().Bytes()
-	keyBytes = append(keyBytes, collections.MapElemKey(prefixUnprocessableRequests, requestID.Bytes())...)
+	keyBytes = append(keyBytes, collections.MapElemKey(PrefixUnprocessableRequests, requestID.Bytes())...)
 	_, wasRemoved := block.Mutations().Dels[kv.Key(keyBytes)]
 	return wasRemoved
 }

@@ -28,7 +28,7 @@ func UpdateLatestBlockInfo(partition kv.KVStore, anchorTxID iotago.TransactionID
 // SaveRequestReceipt appends request record to the record log and creates records for fast lookup
 func SaveRequestReceipt(partition kv.KVStore, rec *RequestReceipt, key RequestLookupKey) error {
 	// save lookup record for fast lookup
-	lookupTable := collections.NewMap(partition, prefixRequestLookupIndex)
+	lookupTable := collections.NewMap(partition, PrefixRequestLookupIndex)
 	digest := rec.Request.ID().LookupDigest()
 	var lst RequestLookupKeyList
 	digestExists := lookupTable.HasAt(digest[:])
@@ -53,16 +53,16 @@ func SaveRequestReceipt(partition kv.KVStore, rec *RequestReceipt, key RequestLo
 	lookupTable.SetAt(digest[:], lst.Bytes())
 	// save the record. Key is a LookupKey
 	data := rec.Bytes()
-	collections.NewMap(partition, prefixRequestReceipts).SetAt(key.Bytes(), data)
+	collections.NewMap(partition, PrefixRequestReceipts).SetAt(key.Bytes(), data)
 	return nil
 }
 
 func SaveEvent(partition kv.KVStore, eventKey []byte, event *isc.Event) {
-	collections.NewMap(partition, prefixRequestEvents).SetAt(eventKey, event.Bytes())
+	collections.NewMap(partition, PrefixRequestEvents).SetAt(eventKey, event.Bytes())
 }
 
 func mustGetLookupKeyListFromReqID(partition kv.KVStoreReader, reqID isc.RequestID) RequestLookupKeyList {
-	lookupTable := collections.NewMapReadOnly(partition, prefixRequestLookupIndex)
+	lookupTable := collections.NewMapReadOnly(partition, PrefixRequestLookupIndex)
 	digest := reqID.LookupDigest()
 	seen := lookupTable.HasAt(digest[:])
 	if !seen {
@@ -79,7 +79,7 @@ func mustGetLookupKeyListFromReqID(partition kv.KVStoreReader, reqID isc.Request
 
 // RequestLookupKeyList contains multiple references for record entries with colliding digests, this function returns the correct record for the given requestID
 func getCorrectRecordFromLookupKeyList(partition kv.KVStoreReader, keyList RequestLookupKeyList, reqID isc.RequestID) (*RequestReceipt, error) {
-	records := collections.NewMapReadOnly(partition, prefixRequestReceipts)
+	records := collections.NewMapReadOnly(partition, PrefixRequestReceipts)
 	for _, lookupKey := range keyList {
 		recBytes := records.GetAt(lookupKey.Bytes())
 		rec, err := RequestReceiptFromBytes(recBytes, lookupKey.BlockIndex(), lookupKey.RequestIndex())
@@ -112,7 +112,7 @@ func getRequestEventsInternal(partition kv.KVStoreReader, reqID isc.RequestID) (
 		return nil, nil
 	}
 	eventIndex := uint16(0)
-	events := collections.NewMapReadOnly(partition, prefixRequestEvents)
+	events := collections.NewMapReadOnly(partition, PrefixRequestEvents)
 	var ret [][]byte
 	for {
 		key := NewEventLookupKey(record.BlockIndex, record.RequestIndex, eventIndex).Bytes()
@@ -136,7 +136,7 @@ func getSmartContractEventsInternal(partition kv.KVStoreReader, contractID isc.H
 
 	filteredEvents := make([][]byte, 0)
 	for blockNumber := fromBlock; blockNumber <= adjustedToBlock; blockNumber++ {
-		eventBlockKey := collections.MapElemKey(prefixRequestEvents, codec.EncodeUint32(blockNumber))
+		eventBlockKey := collections.MapElemKey(PrefixRequestEvents, codec.EncodeUint32(blockNumber))
 
 		partition.Iterate(eventBlockKey, func(_ kv.Key, value []byte) bool {
 			parsedContractID, _ := isc.ContractIDFromEventBytes(value)
@@ -153,7 +153,7 @@ func getSmartContractEventsInternal(partition kv.KVStoreReader, contractID isc.H
 }
 
 func pruneEventsByBlockIndex(partition kv.KVStore, blockIndex uint32, totalRequests uint16) {
-	events := collections.NewMap(partition, prefixRequestEvents)
+	events := collections.NewMap(partition, PrefixRequestEvents)
 	for reqIdx := uint16(0); reqIdx < totalRequests; reqIdx++ {
 		eventIndex := uint16(0)
 		for {
@@ -185,7 +185,7 @@ func getRequestLogRecordsForBlockBin(partition kv.KVStoreReader, blockIndex uint
 }
 
 func pruneRequestLookupTable(partition kv.KVStore, lookupDigest isc.RequestLookupDigest, blockIndex uint32) error {
-	lut := collections.NewMap(partition, prefixRequestLookupIndex)
+	lut := collections.NewMap(partition, PrefixRequestLookupIndex)
 
 	res := lut.GetAt(lookupDigest[:])
 	if len(res) == 0 {
@@ -210,7 +210,7 @@ func pruneRequestLookupTable(partition kv.KVStore, lookupDigest isc.RequestLooku
 }
 
 func pruneRequestLogRecordsByBlockIndex(partition kv.KVStore, blockIndex uint32, totalRequests uint16) {
-	receiptMap := collections.NewMap(partition, prefixRequestReceipts)
+	receiptMap := collections.NewMap(partition, PrefixRequestReceipts)
 
 	for reqIdx := uint16(0); reqIdx < totalRequests; reqIdx++ {
 		lookupKey := NewRequestLookupKey(blockIndex, reqIdx)
@@ -239,12 +239,12 @@ func getBlockInfoBytes(partition kv.KVStoreReader, blockIndex uint32) []byte {
 }
 
 func RequestReceiptKey(rkey RequestLookupKey) []byte {
-	return []byte(collections.MapElemKey(prefixRequestReceipts, rkey.Bytes()))
+	return []byte(collections.MapElemKey(PrefixRequestReceipts, rkey.Bytes()))
 }
 
 func getRequestRecordDataByRef(partition kv.KVStoreReader, blockIndex uint32, requestIndex uint16) ([]byte, bool) {
 	lookupKey := NewRequestLookupKey(blockIndex, requestIndex)
-	lookupTable := collections.NewMapReadOnly(partition, prefixRequestReceipts)
+	lookupTable := collections.NewMapReadOnly(partition, PrefixRequestReceipts)
 	recBin := lookupTable.GetAt(lookupKey[:])
 	if recBin == nil {
 		return nil, false

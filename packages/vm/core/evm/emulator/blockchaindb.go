@@ -24,20 +24,20 @@ const (
 	// config values:
 
 	// EVM chain ID
-	keyChainID = "c" // covered in: TestStorageContract
+	KeyChainID = "c" // covered in: TestStorageContract
 
 	// blocks:
 
-	keyNumber                    = "n"    // covered in: TestStorageContract
-	keyTransactionsByBlockNumber = "n:t"  // covered in: TestStorageContract
-	keyReceiptsByBlockNumber     = "n:r"  // covered in: TestStorageContract
-	keyBlockHeaderByBlockNumber  = "n:bh" // covered in: TestStorageContract
+	KeyNumber                    = "n"    // covered in: TestStorageContract
+	KeyTransactionsByBlockNumber = "n:t"  // covered in: TestStorageContract
+	KeyReceiptsByBlockNumber     = "n:r"  // covered in: TestStorageContract
+	KeyBlockHeaderByBlockNumber  = "n:bh" // covered in: TestStorageContract
 
 	// indexes:
 
-	keyBlockNumberByBlockHash = "bh:n" // covered in: TestStorageContract
-	keyBlockNumberByTxHash    = "th:n" // covered in: TestStorageContract
-	keyBlockIndexByTxHash     = "th:i" // covered in: TestStorageContract
+	KeyBlockNumberByBlockHash = "bh:n" // covered in: TestStorageContract
+	KeyBlockNumberByTxHash    = "th:n" // covered in: TestStorageContract
+	KeyBlockIndexByTxHash     = "th:i" // covered in: TestStorageContract
 
 	BlockKeepAll = -1
 )
@@ -59,7 +59,7 @@ func NewBlockchainDB(store kv.KVStore, blockGasLimit uint64, blockKeepAmount int
 }
 
 func (bc *BlockchainDB) Initialized() bool {
-	return bc.kv.Get(keyChainID) != nil
+	return bc.kv.Get(KeyChainID) != nil
 }
 
 func (bc *BlockchainDB) Init(chainID uint16, timestamp uint64) {
@@ -68,11 +68,11 @@ func (bc *BlockchainDB) Init(chainID uint16, timestamp uint64) {
 }
 
 func (bc *BlockchainDB) SetChainID(chainID uint16) {
-	bc.kv.Set(keyChainID, codec.EncodeUint16(chainID))
+	bc.kv.Set(KeyChainID, codec.EncodeUint16(chainID))
 }
 
 func GetChainIDFromBlockChainDBState(kv kv.KVStoreReader) uint16 {
-	return codec.MustDecodeUint16(kv.Get(keyChainID))
+	return codec.MustDecodeUint16(kv.Get(KeyChainID))
 }
 
 func (bc *BlockchainDB) GetChainID() uint16 {
@@ -80,43 +80,43 @@ func (bc *BlockchainDB) GetChainID() uint16 {
 }
 
 func (bc *BlockchainDB) setNumber(n uint64) {
-	bc.kv.Set(keyNumber, codec.EncodeUint64(n))
+	bc.kv.Set(KeyNumber, codec.EncodeUint64(n))
 }
 
 func (bc *BlockchainDB) GetNumber() uint64 {
-	return codec.MustDecodeUint64(bc.kv.Get(keyNumber))
+	return codec.MustDecodeUint64(bc.kv.Get(KeyNumber))
 }
 
-func makeTransactionsByBlockNumberKey(blockNumber uint64) kv.Key {
-	return keyTransactionsByBlockNumber + kv.Key(codec.EncodeUint64(blockNumber))
+func MakeTransactionsByBlockNumberKey(blockNumber uint64) kv.Key {
+	return KeyTransactionsByBlockNumber + kv.Key(codec.EncodeUint64(blockNumber))
 }
 
-func makeReceiptsByBlockNumberKey(blockNumber uint64) kv.Key {
-	return keyReceiptsByBlockNumber + kv.Key(codec.EncodeUint64(blockNumber))
+func MakeReceiptsByBlockNumberKey(blockNumber uint64) kv.Key {
+	return KeyReceiptsByBlockNumber + kv.Key(codec.EncodeUint64(blockNumber))
 }
 
-func makeBlockHeaderByBlockNumberKey(blockNumber uint64) kv.Key {
-	return keyBlockHeaderByBlockNumber + kv.Key(codec.EncodeUint64(blockNumber))
+func MakeBlockHeaderByBlockNumberKey(blockNumber uint64) kv.Key {
+	return KeyBlockHeaderByBlockNumber + kv.Key(codec.EncodeUint64(blockNumber))
 }
 
-func makeBlockNumberByBlockHashKey(hash common.Hash) kv.Key {
-	return keyBlockNumberByBlockHash + kv.Key(hash.Bytes())
+func MakeBlockNumberByBlockHashKey(hash common.Hash) kv.Key {
+	return KeyBlockNumberByBlockHash + kv.Key(hash.Bytes())
 }
 
-func makeBlockNumberByTxHashKey(hash common.Hash) kv.Key {
-	return keyBlockNumberByTxHash + kv.Key(hash.Bytes())
+func MakeBlockNumberByTxHashKey(hash common.Hash) kv.Key {
+	return KeyBlockNumberByTxHash + kv.Key(hash.Bytes())
 }
 
-func makeTxIndexInBlockByTxHashKey(hash common.Hash) kv.Key {
-	return keyBlockIndexByTxHash + kv.Key(hash.Bytes())
+func MakeTxIndexInBlockByTxHashKey(hash common.Hash) kv.Key {
+	return KeyBlockIndexByTxHash + kv.Key(hash.Bytes())
 }
 
 func (bc *BlockchainDB) getTxArray(blockNumber uint64) *collections.Array {
-	return collections.NewArray(bc.kv, string(makeTransactionsByBlockNumberKey(blockNumber)))
+	return collections.NewArray(bc.kv, string(MakeTransactionsByBlockNumberKey(blockNumber)))
 }
 
 func (bc *BlockchainDB) getReceiptArray(blockNumber uint64) *collections.Array {
-	return collections.NewArray(bc.kv, string(makeReceiptsByBlockNumberKey(blockNumber)))
+	return collections.NewArray(bc.kv, string(MakeReceiptsByBlockNumberKey(blockNumber)))
 }
 
 func (bc *BlockchainDB) GetPendingBlockNumber() uint64 {
@@ -152,11 +152,11 @@ func (bc *BlockchainDB) AddTransaction(tx *types.Transaction, receipt *types.Rec
 	txArray := bc.getTxArray(blockNumber)
 	txArray.Push(evmtypes.EncodeTransaction(tx))
 	bc.kv.Set(
-		makeBlockNumberByTxHashKey(tx.Hash()),
+		MakeBlockNumberByTxHashKey(tx.Hash()),
 		codec.EncodeUint64(blockNumber),
 	)
 	bc.kv.Set(
-		makeTxIndexInBlockByTxHashKey(tx.Hash()),
+		MakeTxIndexInBlockByTxHashKey(tx.Hash()),
 		codec.EncodeUint32(txArray.Len()-1),
 	)
 
@@ -200,13 +200,13 @@ func (bc *BlockchainDB) deleteBlock(blockNumber uint64) {
 	n := txs.Len()
 	for i := uint32(0); i < n; i++ {
 		txHash := bc.GetTransactionByBlockNumberAndIndex(blockNumber, i).Hash()
-		bc.kv.Del(makeBlockNumberByTxHashKey(txHash))
-		bc.kv.Del(makeTxIndexInBlockByTxHashKey(txHash))
+		bc.kv.Del(MakeBlockNumberByTxHashKey(txHash))
+		bc.kv.Del(MakeTxIndexInBlockByTxHashKey(txHash))
 	}
 	txs.Erase()
 	bc.getReceiptArray(blockNumber).Erase()
-	bc.kv.Del(makeBlockHeaderByBlockNumberKey(blockNumber))
-	bc.kv.Del(makeBlockNumberByBlockHashKey(header.Hash))
+	bc.kv.Del(MakeBlockHeaderByBlockNumberKey(blockNumber))
+	bc.kv.Del(MakeBlockNumberByBlockHashKey(header.Hash))
 }
 
 type header struct {
@@ -295,11 +295,11 @@ func (bc *BlockchainDB) makeEthereumHeader(g *header, blockNumber uint64) *types
 func (bc *BlockchainDB) addBlock(header *types.Header) {
 	blockNumber := header.Number.Uint64()
 	bc.kv.Set(
-		makeBlockHeaderByBlockNumberKey(blockNumber),
+		MakeBlockHeaderByBlockNumberKey(blockNumber),
 		makeHeader(header).Bytes(),
 	)
 	bc.kv.Set(
-		makeBlockNumberByBlockHashKey(header.Hash()),
+		MakeBlockNumberByBlockHashKey(header.Hash()),
 		codec.EncodeUint64(blockNumber),
 	)
 	bc.setNumber(blockNumber)
@@ -357,11 +357,11 @@ func (bc *BlockchainDB) getBlockNumberBy(key kv.Key) (uint64, bool) {
 }
 
 func (bc *BlockchainDB) GetBlockNumberByTxHash(txHash common.Hash) (uint64, bool) {
-	return bc.getBlockNumberBy(makeBlockNumberByTxHashKey(txHash))
+	return bc.getBlockNumberBy(MakeBlockNumberByTxHashKey(txHash))
 }
 
 func (bc *BlockchainDB) GetTxIndexInBlockByTxHash(txHash common.Hash) uint32 {
-	return codec.MustDecodeUint32(bc.kv.Get(makeTxIndexInBlockByTxHashKey(txHash)), 0)
+	return codec.MustDecodeUint32(bc.kv.Get(MakeTxIndexInBlockByTxHashKey(txHash)), 0)
 }
 
 func (bc *BlockchainDB) GetReceiptByTxHash(txHash common.Hash) *types.Receipt {
@@ -409,7 +409,7 @@ func (bc *BlockchainDB) GetBlockHashByBlockNumber(blockNumber uint64) common.Has
 }
 
 func (bc *BlockchainDB) GetBlockNumberByBlockHash(hash common.Hash) (uint64, bool) {
-	return bc.getBlockNumberBy(makeBlockNumberByBlockHashKey(hash))
+	return bc.getBlockNumberBy(MakeBlockNumberByBlockHashKey(hash))
 }
 
 func (bc *BlockchainDB) GetTimestampByBlockNumber(blockNumber uint64) uint64 {
@@ -457,7 +457,7 @@ func (bc *BlockchainDB) GetHeaderByBlockNumber(blockNumber uint64) *types.Header
 }
 
 func (bc *BlockchainDB) getHeaderByBlockNumber(blockNumber uint64) *header {
-	b := bc.kv.Get(makeBlockHeaderByBlockNumberKey(blockNumber))
+	b := bc.kv.Get(MakeBlockHeaderByBlockNumberKey(blockNumber))
 	if b == nil {
 		return nil
 	}
