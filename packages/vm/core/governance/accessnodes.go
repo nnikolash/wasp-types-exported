@@ -138,6 +138,10 @@ func (a *AccessNodeInfo) ValidateCertificate() bool {
 	return cert.Verify(nodePubKey, validatorAddr)
 }
 
+func (a *AccessNodeInfo) ValidatorAddr() []byte {
+	return a.validatorAddr
+}
+
 // GetChainNodesRequest
 type GetChainNodesRequest struct{}
 

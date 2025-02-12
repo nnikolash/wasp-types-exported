@@ -19,5 +19,5 @@ func NewStateAccess(store kv.KVStoreReader) *StateAccess {
 }
 
 func (sa *StateAccess) SchemaVersion() isc.SchemaVersion {
-	return getSchemaVersion(sa.state)
+	return GetSchemaVersion(sa.state)
 }
