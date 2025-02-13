@@ -9,6 +9,7 @@ import (
 
 	"github.com/iotaledger/hive.go/serializer/v2"
 	iotago "github.com/iotaledger/iota.go/v3"
+
 	"github.com/nnikolash/wasp-types-exported/packages/kv/dict"
 	"github.com/nnikolash/wasp-types-exported/packages/util"
 	"github.com/nnikolash/wasp-types-exported/packages/util/rwutil"
@@ -38,6 +39,10 @@ func OnLedgerFromUTXO(output iotago.Output, outputID iotago.OutputID) (OnLedgerR
 		return nil, err
 	}
 	return r, nil
+}
+
+func (req *onLedgerRequestData) RequestMetadataRaw() *RequestMetadata {
+	return req.requestMetadata
 }
 
 func (req *onLedgerRequestData) readFromUTXO(output iotago.Output, outputID iotago.OutputID) error {
