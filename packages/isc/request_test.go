@@ -50,7 +50,7 @@ func TestRequestDataSerialization(t *testing.T) {
 		}
 		req, err = OnLedgerFromUTXO(basicOutput, iotago.OutputID{})
 		require.NoError(t, err)
-		rwutil.ReadWriteTest(t, req.(*onLedgerRequestData), new(onLedgerRequestData))
+		rwutil.ReadWriteTest(t, req.(*OnLedgerRequestData), new(OnLedgerRequestData))
 	})
 }
 

@@ -39,7 +39,7 @@ func RequestFromReader(rr *rwutil.Reader) (ret Request) {
 	kind := rr.ReadKind()
 	switch RequestKind(kind) {
 	case requestKindOnLedger:
-		ret = new(onLedgerRequestData)
+		ret = new(OnLedgerRequestData)
 	case requestKindOffLedgerISC:
 		ret = new(OffLedgerRequestData)
 	case requestKindOffLedgerEVMTx:

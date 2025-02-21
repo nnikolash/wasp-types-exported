@@ -15,7 +15,7 @@ import (
 	"github.com/nnikolash/wasp-types-exported/packages/util/rwutil"
 )
 
-type onLedgerRequestData struct {
+type OnLedgerRequestData struct {
 	outputID iotago.OutputID
 	output   iotago.Output
 
@@ -27,25 +27,25 @@ type onLedgerRequestData struct {
 }
 
 var (
-	_ Request         = new(onLedgerRequestData)
-	_ OnLedgerRequest = new(onLedgerRequestData)
-	_ Calldata        = new(onLedgerRequestData)
-	_ Features        = new(onLedgerRequestData)
+	_ Request         = new(OnLedgerRequestData)
+	_ OnLedgerRequest = new(OnLedgerRequestData)
+	_ Calldata        = new(OnLedgerRequestData)
+	_ Features        = new(OnLedgerRequestData)
 )
 
 func OnLedgerFromUTXO(output iotago.Output, outputID iotago.OutputID) (OnLedgerRequest, error) {
-	r := &onLedgerRequestData{}
+	r := &OnLedgerRequestData{}
 	if err := r.readFromUTXO(output, outputID); err != nil {
 		return nil, err
 	}
 	return r, nil
 }
 
-func (req *onLedgerRequestData) RequestMetadataRaw() *RequestMetadata {
+func (req *OnLedgerRequestData) RequestMetadataRaw() *RequestMetadata {
 	return req.requestMetadata
 }
 
-func (req *onLedgerRequestData) readFromUTXO(output iotago.Output, outputID iotago.OutputID) error {
+func (req *OnLedgerRequestData) readFromUTXO(output iotago.Output, outputID iotago.OutputID) error {
 	var reqMetadata *RequestMetadata
 	var err error
 
@@ -68,7 +68,7 @@ func (req *onLedgerRequestData) readFromUTXO(output iotago.Output, outputID iota
 	return nil
 }
 
-func (req *onLedgerRequestData) Read(r io.Reader) error {
+func (req *OnLedgerRequestData) Read(r io.Reader) error {
 	rr := rwutil.NewReader(r)
 	rr.ReadKindAndVerify(rwutil.Kind(requestKindOnLedger))
 	rr.ReadN(req.outputID[:])
@@ -83,7 +83,7 @@ func (req *onLedgerRequestData) Read(r io.Reader) error {
 	return req.readFromUTXO(req.output, req.outputID)
 }
 
-func (req *onLedgerRequestData) Write(w io.Writer) error {
+func (req *OnLedgerRequestData) Write(w io.Writer) error {
 	ww := rwutil.NewWriter(w)
 	ww.WriteKind(rwutil.Kind(requestKindOnLedger))
 	ww.WriteN(req.outputID[:])
@@ -96,14 +96,14 @@ func (req *onLedgerRequestData) Write(w io.Writer) error {
 	return ww.Err
 }
 
-func (req *onLedgerRequestData) Allowance() *Assets {
+func (req *OnLedgerRequestData) Allowance() *Assets {
 	if req.requestMetadata == nil {
 		return NewEmptyAssets()
 	}
 	return req.requestMetadata.Allowance
 }
 
-func (req *onLedgerRequestData) Assets() *Assets {
+func (req *OnLedgerRequestData) Assets() *Assets {
 	amount := req.output.Deposit()
 	tokens := req.output.NativeTokenList()
 	ret := NewAssets(amount, tokens)
@@ -114,11 +114,11 @@ func (req *onLedgerRequestData) Assets() *Assets {
 	return ret
 }
 
-func (req *onLedgerRequestData) Bytes() []byte {
+func (req *OnLedgerRequestData) Bytes() []byte {
 	return rwutil.WriteToBytes(req)
 }
 
-func (req *onLedgerRequestData) CallTarget() CallTarget {
+func (req *OnLedgerRequestData) CallTarget() CallTarget {
 	if req.requestMetadata == nil {
 		return CallTarget{}
 	}
@@ -128,11 +128,11 @@ func (req *onLedgerRequestData) CallTarget() CallTarget {
 	}
 }
 
-func (req *onLedgerRequestData) Clone() OnLedgerRequest {
+func (req *OnLedgerRequestData) Clone() OnLedgerRequest {
 	outputID := iotago.OutputID{}
 	copy(outputID[:], req.outputID[:])
 
-	ret := &onLedgerRequestData{
+	ret := &OnLedgerRequestData{
 		outputID:         outputID,
 		output:           req.output.Clone(),
 		featureBlocks:    req.featureBlocks.Clone(),
@@ -144,7 +144,7 @@ func (req *onLedgerRequestData) Clone() OnLedgerRequest {
 	return ret
 }
 
-func (req *onLedgerRequestData) Expiry() (time.Time, iotago.Address) {
+func (req *OnLedgerRequestData) Expiry() (time.Time, iotago.Address) {
 	expiration := req.unlockConditions.Expiration()
 	if expiration == nil {
 		return time.Time{}, nil
@@ -153,23 +153,23 @@ func (req *onLedgerRequestData) Expiry() (time.Time, iotago.Address) {
 	return time.Unix(int64(expiration.UnixTime), 0), expiration.ReturnAddress
 }
 
-func (req *onLedgerRequestData) Features() Features {
+func (req *OnLedgerRequestData) Features() Features {
 	return req
 }
 
-func (req *onLedgerRequestData) GasBudget() (gasBudget uint64, isEVM bool) {
+func (req *OnLedgerRequestData) GasBudget() (gasBudget uint64, isEVM bool) {
 	if req.requestMetadata == nil {
 		return 0, false
 	}
 	return req.requestMetadata.GasBudget, false
 }
 
-func (req *onLedgerRequestData) ID() RequestID {
+func (req *OnLedgerRequestData) ID() RequestID {
 	return RequestID(req.outputID)
 }
 
 // IsInternalUTXO if true the output cannot be interpreted as a request
-func (req *onLedgerRequestData) IsInternalUTXO(chainID ChainID) bool {
+func (req *OnLedgerRequestData) IsInternalUTXO(chainID ChainID) bool {
 	if req.output.Type() == iotago.OutputFoundry {
 		return true
 	}
@@ -185,11 +185,11 @@ func (req *onLedgerRequestData) IsInternalUTXO(chainID ChainID) bool {
 	return true
 }
 
-func (req *onLedgerRequestData) IsOffLedger() bool {
+func (req *OnLedgerRequestData) IsOffLedger() bool {
 	return false
 }
 
-func (req *onLedgerRequestData) NFT() *NFT {
+func (req *OnLedgerRequestData) NFT() *NFT {
 	nftOutput, ok := req.output.(*iotago.NFTOutput)
 	if !ok {
 		return nil
@@ -211,22 +211,22 @@ func (req *onLedgerRequestData) NFT() *NFT {
 	return ret
 }
 
-func (req *onLedgerRequestData) Output() iotago.Output {
+func (req *OnLedgerRequestData) Output() iotago.Output {
 	return req.output
 }
 
-func (req *onLedgerRequestData) OutputID() iotago.OutputID {
+func (req *OnLedgerRequestData) OutputID() iotago.OutputID {
 	return req.outputID
 }
 
-func (req *onLedgerRequestData) Params() dict.Dict {
+func (req *OnLedgerRequestData) Params() dict.Dict {
 	if req.requestMetadata == nil {
 		return dict.Dict{}
 	}
 	return req.requestMetadata.Params
 }
 
-func (req *onLedgerRequestData) ReturnAmount() (uint64, bool) {
+func (req *OnLedgerRequestData) ReturnAmount() (uint64, bool) {
 	storageDepositReturn := req.unlockConditions.StorageDepositReturn()
 	if storageDepositReturn == nil {
 		return 0, false
@@ -234,7 +234,7 @@ func (req *onLedgerRequestData) ReturnAmount() (uint64, bool) {
 	return storageDepositReturn.Amount, true
 }
 
-func (req *onLedgerRequestData) SenderAccount() AgentID {
+func (req *OnLedgerRequestData) SenderAccount() AgentID {
 	sender := req.senderAddress()
 	if sender == nil {
 		return nil
@@ -248,7 +248,7 @@ func (req *onLedgerRequestData) SenderAccount() AgentID {
 	return NewAgentID(sender)
 }
 
-func (req *onLedgerRequestData) senderAddress() iotago.Address {
+func (req *OnLedgerRequestData) senderAddress() iotago.Address {
 	senderBlock := req.featureBlocks.SenderFeature()
 	if senderBlock == nil {
 		return nil
@@ -256,7 +256,7 @@ func (req *onLedgerRequestData) senderAddress() iotago.Address {
 	return senderBlock.Address
 }
 
-func (req *onLedgerRequestData) String() string {
+func (req *OnLedgerRequestData) String() string {
 	metadata := req.requestMetadata
 	if metadata == nil {
 		return "onledger request without metadata"
@@ -271,7 +271,7 @@ func (req *onLedgerRequestData) String() string {
 	)
 }
 
-func (req *onLedgerRequestData) TargetAddress() iotago.Address {
+func (req *OnLedgerRequestData) TargetAddress() iotago.Address {
 	switch out := req.output.(type) {
 	case *iotago.BasicOutput:
 		return out.Ident()
@@ -286,7 +286,7 @@ func (req *onLedgerRequestData) TargetAddress() iotago.Address {
 	}
 }
 
-func (req *onLedgerRequestData) TimeLock() time.Time {
+func (req *OnLedgerRequestData) TimeLock() time.Time {
 	timelock := req.unlockConditions.Timelock()
 	if timelock == nil {
 		return time.Time{}
@@ -294,7 +294,7 @@ func (req *onLedgerRequestData) TimeLock() time.Time {
 	return time.Unix(int64(timelock.UnixTime), 0)
 }
 
-func (req *onLedgerRequestData) EVMCallMsg() *ethereum.CallMsg {
+func (req *OnLedgerRequestData) EVMCallMsg() *ethereum.CallMsg {
 	return nil
 }
 
