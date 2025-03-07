@@ -10,6 +10,7 @@ import (
 
 	"github.com/iotaledger/hive.go/serializer/v2"
 	iotago "github.com/iotaledger/iota.go/v3"
+
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/kv/codec"
 	"github.com/nnikolash/wasp-types-exported/packages/kv/dict"
@@ -76,12 +77,12 @@ func (h *magicContractHandler) CallView(
 
 // handler for ISCSandbox::getAllowanceFrom
 func (h *magicContractHandler) GetAllowanceFrom(addr common.Address) iscmagic.ISCAssets {
-	return iscmagic.WrapISCAssets(getAllowance(h.ctx, addr, h.caller.Address()))
+	return iscmagic.WrapISCAssets(getAllowance(h.ctx, addr, h.caller))
 }
 
 // handler for ISCSandbox::getAllowanceTo
 func (h *magicContractHandler) GetAllowanceTo(target common.Address) iscmagic.ISCAssets {
-	return iscmagic.WrapISCAssets(getAllowance(h.ctx, h.caller.Address(), target))
+	return iscmagic.WrapISCAssets(getAllowance(h.ctx, h.caller, target))
 }
 
 // handler for ISCSandbox::getAllowance

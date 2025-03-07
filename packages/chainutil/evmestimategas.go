@@ -23,7 +23,7 @@ var evmErrOutOfGasRegex = regexp.MustCompile("out of gas|intrinsic gas too low")
 // for estimating gas.
 func EVMEstimateGas(ch chain.ChainCore, aliasOutput *isc.AliasOutputWithID, call ethereum.CallMsg) (uint64, error) { //nolint:gocyclo,funlen
 	// Determine the lowest and highest possible gas limits to binary search in between
-	intrinsicGas, err := core.IntrinsicGas(call.Data, nil, call.To == nil, true, true, true)
+	intrinsicGas, err := core.IntrinsicGas(call.Data, nil, nil, call.To == nil, true, true, true)
 	if err != nil {
 		return 0, err
 	}

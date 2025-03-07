@@ -9,10 +9,12 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/holiman/uint256"
 
 	"github.com/iotaledger/hive.go/lo"
+
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/kv/dict"
 )
@@ -24,13 +26,13 @@ import (
 type magicContractHandler struct {
 	ctx       isc.Sandbox
 	evm       *vm.EVM
-	caller    vm.ContractRef
+	caller    common.Address
 	callValue *uint256.Int
 }
 
 // callHandler finds the requested ISC magic method by reflection, and executes
 // it.
-func callHandler(ctx isc.Sandbox, evm *vm.EVM, caller vm.ContractRef, callValue *uint256.Int, method *abi.Method, args []any) []byte {
+func callHandler(ctx isc.Sandbox, evm *vm.EVM, caller common.Address, callValue *uint256.Int, method *abi.Method, args []any) []byte {
 	return reflectCall(&magicContractHandler{
 		ctx:       ctx,
 		evm:       evm,
@@ -56,7 +58,7 @@ func reflectCall(handler any, method *abi.Method, args []any) []byte {
 	callArgs := make([]reflect.Value, len(args))
 	if len(args) > 0 {
 		fields := make([]reflect.StructField, len(args))
-		for i := 0; i < len(args); i++ {
+		for i := range args {
 			field := reflect.StructField{
 				Name: titleCase(method.Inputs[i].Name),
 				Type: handlerMethodType.In(i),
@@ -68,7 +70,7 @@ func reflectCall(handler any, method *abi.Method, args []any) []byte {
 		if err != nil {
 			panic(err)
 		}
-		for i := 0; i < len(args); i++ {
+		for i := range args {
 			callArgs[i] = reflect.ValueOf(v).Elem().Field(i)
 		}
 	}
@@ -88,14 +90,14 @@ func reflectCall(handler any, method *abi.Method, args []any) []byte {
 
 func (h *magicContractHandler) call(target, ep isc.Hname, params dict.Dict, allowance *isc.Assets) dict.Dict {
 	return h.ctx.Privileged().CallOnBehalfOf(
-		isc.NewEthereumAddressAgentID(h.ctx.ChainID(), h.caller.Address()),
+		isc.NewEthereumAddressAgentID(h.ctx.ChainID(), h.caller),
 		target, ep, params, allowance,
 	)
 }
 
 func (h *magicContractHandler) callView(target, ep isc.Hname, params dict.Dict) dict.Dict {
 	return h.ctx.Privileged().CallOnBehalfOf(
-		isc.NewEthereumAddressAgentID(h.ctx.ChainID(), h.caller.Address()),
+		isc.NewEthereumAddressAgentID(h.ctx.ChainID(), h.caller),
 		target, ep, params, nil,
 	)
 }

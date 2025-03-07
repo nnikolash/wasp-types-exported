@@ -7,6 +7,7 @@ import (
 	"math/big"
 
 	iotago "github.com/iotaledger/iota.go/v3"
+
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/kv/codec"
 	"github.com/nnikolash/wasp-types-exported/packages/kv/collections"
@@ -105,7 +106,7 @@ func (h *magicContractHandler) FoundryCreateNew(tokenScheme iotago.SimpleTokenSc
 
 func (h *magicContractHandler) CreateNativeTokenFoundry(tokenName string, tickerSymbol string, decimals uint8, tokenScheme iotago.SimpleTokenScheme, allowance iscmagic.ISCAssets) uint32 {
 	ret := h.ctx.Privileged().CallOnBehalfOf(
-		isc.NewEthereumAddressAgentID(h.ctx.ChainID(), h.caller.Address()),
+		isc.NewEthereumAddressAgentID(h.ctx.ChainID(), h.caller),
 		accounts.Contract.Hname(),
 		accounts.FuncNativeTokenCreate.Hname(),
 		dict.Dict{

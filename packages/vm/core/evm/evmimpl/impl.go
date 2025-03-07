@@ -14,6 +14,7 @@ import (
 	"github.com/samber/lo"
 
 	iotago "github.com/iotaledger/iota.go/v3"
+
 	"github.com/nnikolash/wasp-types-exported/packages/evm/evmtypes"
 	"github.com/nnikolash/wasp-types-exported/packages/evm/evmutil"
 	"github.com/nnikolash/wasp-types-exported/packages/evm/solidity"
@@ -150,7 +151,7 @@ func applyTransaction(ctx isc.Sandbox) dict.Dict {
 		receipt.Status = types.ReceiptStatusFailed
 		// remove any events from the receipt
 		receipt.Logs = make([]*types.Log, 0)
-		receipt.Bloom = types.CreateBloom(types.Receipts{receipt})
+		receipt.Bloom = types.CreateBloom(receipt)
 	}
 
 	// amend the gas usage (to include any ISC gas burned in sandbox calls)
@@ -161,6 +162,8 @@ func applyTransaction(ctx isc.Sandbox) dict.Dict {
 			receipt.GasUsed = realGasUsed
 		}
 	}
+
+	receipt.Bloom = types.CreateBloom(receipt)
 
 	// make sure we always store the EVM tx/receipt in the BlockchainDB, even
 	// if the ISC request is reverted
@@ -508,7 +511,7 @@ func AddDummyTxWithTransferEvents(
 		Logs:   logs,
 		Status: types.ReceiptStatusSuccessful,
 	}
-	receipt.Bloom = types.CreateBloom(types.Receipts{receipt})
+	receipt.Bloom = types.MergeBloom(types.Receipts{receipt})
 
 	if !reuseCurrentTxContext {
 		// called from outside vmrun, just add the tx without a gas value

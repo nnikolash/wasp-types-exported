@@ -445,7 +445,7 @@ func (bc *BlockchainDB) makeHeader(txs []*types.Transaction, receipts []*types.R
 		header.TxHash = types.DeriveSha(types.Transactions(txs), &fakeHasher{})
 		header.ReceiptHash = types.DeriveSha(types.Receipts(receipts), &fakeHasher{})
 	}
-	header.Bloom = types.CreateBloom(receipts)
+	header.Bloom = types.MergeBloom(receipts)
 	return header
 }
 

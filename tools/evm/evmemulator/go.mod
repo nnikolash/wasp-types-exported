@@ -3,14 +3,14 @@ module github.com/nnikolash/wasp-types-exported/tools/evm/evmemulator
 go 1.21
 
 replace (
-	github.com/ethereum/go-ethereum => github.com/iotaledger/go-ethereum v1.14.5-wasp1
+	github.com/ethereum/go-ethereum => github.com/iotaledger/go-ethereum v1.15.5-wasp1
 	github.com/iotaledger/tools/wasp-cli => ../../wasp-cli/
 	github.com/nnikolash/wasp-types-exported => ../../../
 	go.dedis.ch/kyber/v3 => github.com/kape1395/kyber/v3 v3.0.14-0.20230124095845-ec682ff08c93 // branch: dkg-2suites
 )
 
 require (
-	github.com/ethereum/go-ethereum v1.13.13
+	github.com/ethereum/go-ethereum v1.15.5
 	github.com/nnikolash/wasp-types-exported v1.0.0-00010101000000-000000000000
 	github.com/nnikolash/wasp-types-exported/tools/wasp-cli v0.0.0-20230923193348-da186f5602e0
 	github.com/spf13/cobra v1.8.1
