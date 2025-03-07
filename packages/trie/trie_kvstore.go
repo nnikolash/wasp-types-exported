@@ -50,15 +50,59 @@ func (tr *TrieReader) Get(key []byte) []byte {
 	if terminal == nil {
 		return nil
 	}
-	value, valueInCommitment := terminal.ExtractValue()
+
+	value := tr.getNodeValue(terminal, unpackedTriePath)
+
+	return value
+}
+
+func (tr *TrieReader) GetClosest(key []byte) []byte {
+	unpackedTriePath := unpackBytes(key)
+
+	var node *Tcommitment
+	tr.traversePath(unpackedTriePath, func(n *NodeData, _ []byte, ending pathEndingCode) {
+		if n.Terminal != nil {
+			node = n.Terminal
+		}
+	})
+	if node == nil {
+		return nil
+	}
+
+	value := tr.getNodeValue(node, unpackedTriePath)
+
+	return value
+}
+
+func (tr *TrieReader) GetAllMatches(key []byte) [][]byte {
+	unpackedTriePath := unpackBytes(key)
+
+	var nodes []*Tcommitment
+	tr.traversePath(unpackedTriePath, func(n *NodeData, _ []byte, ending pathEndingCode) {
+		if ending != endingSplit && n.Terminal != nil {
+			nodes = append(nodes, n.Terminal)
+		}
+	})
+
+	values := make([][]byte, 0, len(nodes))
+	for _, node := range nodes {
+		values = append(values, tr.getNodeValue(node, unpackedTriePath))
+	}
+
+	return values
+}
+
+func (tr *TrieReader) getNodeValue(node *Tcommitment, unpackedTriePath []byte) []byte {
+	value, valueInCommitment := node.ExtractValue()
 	if valueInCommitment {
 		assertf(len(value) > 0, "value in commitment must be not nil. Unpacked key: '%s'",
 			hex.EncodeToString(unpackedTriePath))
 		return value
 	}
-	value = tr.nodeStore.valueStore.Get(terminal.Bytes())
+	value = tr.nodeStore.valueStore.Get(node.Bytes())
 	assertf(len(value) > 0, "value in the value store must be not nil. Unpacked key: '%s'",
 		hex.EncodeToString(unpackedTriePath))
+
 	return value
 }
 

@@ -10,11 +10,11 @@ import (
 
 // The evm core contract state stores two subrealms.
 const (
-	// keyEmulatorState is the subrealm prefix for the data stored by the emulator (StateDB + BlockchainDB)
-	keyEmulatorState = "s"
+	// KeyEmulatorState is the subrealm prefix for the data stored by the emulator (StateDB + BlockchainDB)
+	KeyEmulatorState = "s"
 
-	// keyISCMagic is the subrealm prefix for the ISC magic contract
-	keyISCMagic = "m"
+	// KeyISCMagic is the subrealm prefix for the ISC magic contract
+	KeyISCMagic = "m"
 )
 
 func ContractPartition(chainState kv.KVStore) kv.KVStore {
@@ -26,17 +26,17 @@ func ContractPartitionR(chainState kv.KVStoreReader) kv.KVStoreReader {
 }
 
 func EmulatorStateSubrealm(evmPartition kv.KVStore) kv.KVStore {
-	return subrealm.New(evmPartition, keyEmulatorState)
+	return subrealm.New(evmPartition, KeyEmulatorState)
 }
 
 func EmulatorStateSubrealmR(evmPartition kv.KVStoreReader) kv.KVStoreReader {
-	return subrealm.NewReadOnly(evmPartition, keyEmulatorState)
+	return subrealm.NewReadOnly(evmPartition, KeyEmulatorState)
 }
 
 func ISCMagicSubrealm(evmPartition kv.KVStore) kv.KVStore {
-	return subrealm.New(evmPartition, keyISCMagic)
+	return subrealm.New(evmPartition, KeyISCMagic)
 }
 
 func ISCMagicSubrealmR(evmPartition kv.KVStoreReader) kv.KVStoreReader {
-	return subrealm.NewReadOnly(evmPartition, keyISCMagic)
+	return subrealm.NewReadOnly(evmPartition, KeyISCMagic)
 }
