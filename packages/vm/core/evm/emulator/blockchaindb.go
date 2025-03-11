@@ -209,7 +209,7 @@ func (bc *BlockchainDB) deleteBlock(blockNumber uint64) {
 	bc.kv.Del(MakeBlockNumberByBlockHashKey(header.Hash))
 }
 
-type header struct {
+type Header struct {
 	Hash        common.Hash
 	GasLimit    uint64
 	GasUsed     uint64
@@ -219,8 +219,8 @@ type header struct {
 	Bloom       types.Bloom
 }
 
-func makeHeader(h *types.Header) *header {
-	return &header{
+func makeHeader(h *types.Header) *Header {
+	return &Header{
 		Hash:        h.Hash(),
 		GasLimit:    h.GasLimit,
 		GasUsed:     h.GasUsed,
@@ -232,9 +232,9 @@ func makeHeader(h *types.Header) *header {
 }
 
 // note we do not check for excess data bytes because the old format was longer
-func mustHeaderFromBytes(data []byte) (ret *header) {
+func MustHeaderFromBytes(data []byte) (ret *Header) {
 	rr := rwutil.NewBytesReader(data)
-	ret = new(header)
+	ret = new(Header)
 	rr.Read(ret)
 	if rr.Err != nil {
 		panic(rr.Err)
@@ -242,11 +242,11 @@ func mustHeaderFromBytes(data []byte) (ret *header) {
 	return ret
 }
 
-func (h *header) Bytes() []byte {
+func (h *Header) Bytes() []byte {
 	return rwutil.WriteToBytes(h)
 }
 
-func (h *header) Read(r io.Reader) error {
+func (h *Header) Read(r io.Reader) error {
 	rr := rwutil.NewReader(r)
 	rr.ReadN(h.Hash[:])
 	h.GasLimit = rr.ReadGas64()
@@ -258,7 +258,7 @@ func (h *header) Read(r io.Reader) error {
 	return rr.Err
 }
 
-func (h *header) Write(w io.Writer) error {
+func (h *Header) Write(w io.Writer) error {
 	ww := rwutil.NewWriter(w)
 	ww.WriteN(h.Hash[:])
 	ww.WriteGas64(h.GasLimit)
@@ -270,7 +270,7 @@ func (h *header) Write(w io.Writer) error {
 	return ww.Err
 }
 
-func (bc *BlockchainDB) makeEthereumHeader(g *header, blockNumber uint64) *types.Header {
+func (bc *BlockchainDB) makeEthereumHeader(g *Header, blockNumber uint64) *types.Header {
 	if g == nil {
 		return nil
 	}
@@ -456,12 +456,12 @@ func (bc *BlockchainDB) GetHeaderByBlockNumber(blockNumber uint64) *types.Header
 	return bc.makeEthereumHeader(bc.getHeaderByBlockNumber(blockNumber), blockNumber)
 }
 
-func (bc *BlockchainDB) getHeaderByBlockNumber(blockNumber uint64) *header {
+func (bc *BlockchainDB) getHeaderByBlockNumber(blockNumber uint64) *Header {
 	b := bc.kv.Get(MakeBlockHeaderByBlockNumberKey(blockNumber))
 	if b == nil {
 		return nil
 	}
-	return mustHeaderFromBytes(b)
+	return MustHeaderFromBytes(b)
 }
 
 func (bc *BlockchainDB) GetHeaderByHash(hash common.Hash) *types.Header {
