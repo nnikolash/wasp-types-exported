@@ -231,6 +231,16 @@ func makeHeader(h *types.Header) *Header {
 	}
 }
 
+func HeaderFromBytes(data []byte) (ret *Header, err error) {
+	rr := rwutil.NewBytesReader(data)
+	ret = new(Header)
+	rr.Read(ret)
+	if rr.Err != nil {
+		return nil, rr.Err
+	}
+	return ret, nil
+}
+
 // note we do not check for excess data bytes because the old format was longer
 func MustHeaderFromBytes(data []byte) (ret *Header) {
 	rr := rwutil.NewBytesReader(data)

@@ -23,10 +23,10 @@ import (
 )
 
 const (
-	keyAccountNonce          = "n" // covered in: TestStorageContract
-	keyAccountCode           = "c" // covered in: TestStorageContract
-	keyAccountState          = "s" // covered in: TestStorageContract
-	keyAccountSelfDestructed = "S" // covered in: TestSelfDestruct
+	KeyAccountNonce          = "n" // covered in: TestStorageContract
+	KeyAccountCode           = "c" // covered in: TestStorageContract
+	KeyAccountState          = "s" // covered in: TestStorageContract
+	KeyAccountSelfDestructed = "S" // covered in: TestSelfDestruct
 )
 
 func accountKey(prefix kv.Key, addr common.Address) kv.Key {
@@ -34,19 +34,19 @@ func accountKey(prefix kv.Key, addr common.Address) kv.Key {
 }
 
 func accountNonceKey(addr common.Address) kv.Key {
-	return accountKey(keyAccountNonce, addr)
+	return accountKey(KeyAccountNonce, addr)
 }
 
 func accountCodeKey(addr common.Address) kv.Key {
-	return accountKey(keyAccountCode, addr)
+	return accountKey(KeyAccountCode, addr)
 }
 
 func accountStateKey(addr common.Address, hash common.Hash) kv.Key {
-	return accountKey(keyAccountState, addr) + kv.Key(hash[:])
+	return accountKey(KeyAccountState, addr) + kv.Key(hash[:])
 }
 
 func accountSelfDestructedKey(addr common.Address) kv.Key {
-	return accountKey(keyAccountSelfDestructed, addr)
+	return accountKey(KeyAccountSelfDestructed, addr)
 }
 
 // StateDB implements vm.StateDB with a kv.KVStore as backend.
@@ -251,7 +251,7 @@ func (s *StateDB) SelfDestruct(addr common.Address) uint256.Int {
 	s.kv.Del(accountCodeKey(addr))
 
 	keys := make([]kv.Key, 0)
-	s.kv.IterateKeys(accountKey(keyAccountState, addr), func(key kv.Key) bool {
+	s.kv.IterateKeys(accountKey(KeyAccountState, addr), func(key kv.Key) bool {
 		keys = append(keys, key)
 		return true
 	})
