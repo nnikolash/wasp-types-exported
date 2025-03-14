@@ -9,8 +9,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 
+	hivedb "github.com/iotaledger/hive.go/db"
 	"github.com/iotaledger/hive.go/kvstore"
-	hivedb "github.com/iotaledger/hive.go/kvstore/database"
 	"github.com/nnikolash/wasp-types-exported/packages/database"
 	"github.com/nnikolash/wasp-types-exported/packages/kv/codec"
 	"github.com/nnikolash/wasp-types-exported/packages/state"

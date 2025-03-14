@@ -19,13 +19,14 @@ import (
 	"go.dedis.ch/kyber/v3/sign/tbls"
 	"go.dedis.ch/kyber/v3/suites"
 
-	iotago "github.com/iotaledger/iota.go/v3"
 	"github.com/nnikolash/wasp-types-exported/packages/cryptolib"
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/onchangemap"
 	"github.com/nnikolash/wasp-types-exported/packages/tcrypto/bls"
 	"github.com/nnikolash/wasp-types-exported/packages/util"
 	"github.com/nnikolash/wasp-types-exported/packages/util/rwutil"
+
+	iotago "github.com/iotaledger/iota.go/v3"
 )
 
 // secretShareImpl is an implementation for SecretShare.
@@ -532,7 +533,7 @@ func (s *dkShareImpl) BLSRecoverMasterSignature(sigShares [][]byte, data []byte)
 		singleSigShare := tbls.SigShare(sigShares[0])
 		recoveredSignatureBin = singleSigShare.Value()
 	}
-	sig, _, err := bls.SignatureFromBytes(recoveredSignatureBin)
+	sig, err := bls.SignatureFromBytes(recoveredSignatureBin)
 	if err != nil {
 		return nil, err
 	}

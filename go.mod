@@ -6,12 +6,15 @@ toolchain go1.24.0
 
 replace (
 	github.com/ethereum/go-ethereum => github.com/iotaledger/go-ethereum v1.15.5-wasp1
+
+	github.com/iotaledger/hive.go/serializer/v2 => github.com/iotaledger/hive.go/serializer/v2 v2.0.0-rc.1.0.20240319170702-c7591bb5f9f2
 	go.dedis.ch/kyber/v3 => github.com/kape1395/kyber/v3 v3.0.14-0.20230124095845-ec682ff08c93 // branch: dkg-2suites
 )
 
 require (
 	github.com/VictoriaMetrics/fastcache v1.12.2
 	github.com/Yiling-J/theine-go v0.3.1
+	github.com/btcsuite/btcd/btcutil v1.1.6
 	github.com/bygui86/multi-profile/v2 v2.1.0
 	github.com/bytecodealliance/wasmtime-go/v9 v9.0.0
 	github.com/dgraph-io/ristretto v0.1.1
@@ -23,16 +26,17 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/holiman/uint256 v1.3.2
 	github.com/iotaledger/hive.go/app v0.0.0-20240319170702-c7591bb5f9f2
-	github.com/iotaledger/hive.go/constraints v0.0.0-20240319170702-c7591bb5f9f2
+	github.com/iotaledger/hive.go/constraints v0.0.0-20240517131232-748f1ce3a2d2
 	github.com/iotaledger/hive.go/crypto v0.0.0-20240319170702-c7591bb5f9f2
-	github.com/iotaledger/hive.go/ds v0.0.0-20240319170702-c7591bb5f9f2
-	github.com/iotaledger/hive.go/ierrors v0.0.0-20240319170702-c7591bb5f9f2
-	github.com/iotaledger/hive.go/kvstore v0.0.0-20240319170702-c7591bb5f9f2
-	github.com/iotaledger/hive.go/lo v0.0.0-20240319170702-c7591bb5f9f2
+	github.com/iotaledger/hive.go/db v0.0.0-20240520064018-c635e5900894
+	github.com/iotaledger/hive.go/ds v0.0.0-20240517131232-748f1ce3a2d2
+	github.com/iotaledger/hive.go/ierrors v0.0.0-20240517131232-748f1ce3a2d2
+	github.com/iotaledger/hive.go/kvstore v0.0.0-20240520064018-c635e5900894
+	github.com/iotaledger/hive.go/lo v0.0.0-20240517131232-748f1ce3a2d2
 	github.com/iotaledger/hive.go/logger v0.0.0-20240319170702-c7591bb5f9f2
 	github.com/iotaledger/hive.go/objectstorage v0.0.0-20231010133617-cdbd5387e2af
-	github.com/iotaledger/hive.go/runtime v0.0.0-20240319170702-c7591bb5f9f2
-	github.com/iotaledger/hive.go/serializer/v2 v2.0.0-rc.1.0.20240319170702-c7591bb5f9f2
+	github.com/iotaledger/hive.go/runtime v0.0.0-20240517131232-748f1ce3a2d2
+	github.com/iotaledger/hive.go/serializer/v2 v2.0.0-rc.1.0.20240517131232-748f1ce3a2d2
 	github.com/iotaledger/hive.go/web v0.0.0-20240319170702-c7591bb5f9f2
 	github.com/iotaledger/inx-app v1.0.0-rc.3.0.20230417131029-0bfe891d7c4a
 	github.com/iotaledger/inx/go v1.0.0-rc.2
@@ -43,7 +47,6 @@ require (
 	github.com/labstack/gommon v0.4.2
 	github.com/libp2p/go-libp2p v0.30.0
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1
-	github.com/mr-tron/base58 v1.2.0
 	github.com/multiformats/go-multiaddr v0.13.0
 	github.com/pangpanglabs/echoswagger/v2 v2.4.1
 	github.com/pingcap/go-ycsb v1.0.1
@@ -115,9 +118,8 @@ require (
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/holiman/bloomfilter/v2 v2.0.3 // indirect
 	github.com/huin/goupnp v1.3.0 // indirect
-	github.com/iancoleman/orderedmap v0.3.0 // indirect
 	github.com/iotaledger/grocksdb v1.7.5-0.20230220105546-5162e18885c7 // indirect
-	github.com/iotaledger/hive.go/stringify v0.0.0-20231106113411-94ac829adbb2 // indirect
+	github.com/iotaledger/hive.go/stringify v0.0.0-20240517131232-748f1ce3a2d2 // indirect
 	github.com/iotaledger/iota.go v1.0.0 // indirect
 	github.com/ipfs/go-cid v0.4.1 // indirect
 	github.com/ipfs/go-log/v2 v2.5.1 // indirect
@@ -150,6 +152,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
 	github.com/multiformats/go-multiaddr-dns v0.3.1 // indirect
@@ -166,8 +169,8 @@ require (
 	github.com/pasztorpisti/qs v0.0.0-20171216220353-8d6c33ee906c // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
-	github.com/petermattis/goid v0.0.0-20230904192822-1876fd5063bc // indirect
+	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
+	github.com/petermattis/goid v0.0.0-20240503122002-4b96552b8156 // indirect
 	github.com/pingcap/errors v0.11.5-0.20211224045212-9687c2b0f87c // indirect
 	github.com/pion/dtls/v2 v2.2.7 // indirect
 	github.com/pion/logging v0.2.2 // indirect

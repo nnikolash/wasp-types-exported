@@ -7,12 +7,13 @@ import (
 	"go.dedis.ch/kyber/v3/pairing/bn256"
 	"go.dedis.ch/kyber/v3/sign/bdn"
 
-	iotago "github.com/iotaledger/iota.go/v3"
 	"github.com/nnikolash/wasp-types-exported/packages/cryptolib"
 	"github.com/nnikolash/wasp-types-exported/packages/hashing"
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/tcrypto/bls"
 	"github.com/nnikolash/wasp-types-exported/packages/vm/gas"
+
+	iotago "github.com/iotaledger/iota.go/v3"
 )
 
 type utilImpl struct {
@@ -131,11 +132,11 @@ func (u utilImplBLS) AggregateBLSSignatures(pubKeysBin, sigsBin [][]byte) ([]byt
 
 	sigPubKey := make([]bls.SignatureWithPublicKey, len(pubKeysBin))
 	for i := range pubKeysBin {
-		pubKey, _, err := bls.PublicKeyFromBytes(pubKeysBin[i])
+		pubKey, err := bls.PublicKeyFromBytes(pubKeysBin[i])
 		if err != nil {
 			return nil, nil, fmt.Errorf("BLSUtil: wrong public key bytes: %w", err)
 		}
-		sig, _, err := bls.SignatureFromBytes(sigsBin[i])
+		sig, err := bls.SignatureFromBytes(sigsBin[i])
 		if err != nil {
 			return nil, nil, fmt.Errorf("BLSUtil: wrong signature bytes: %w", err)
 		}

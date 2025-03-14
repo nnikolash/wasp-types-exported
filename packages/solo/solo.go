@@ -18,8 +18,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zapcore"
 
+	hivedb "github.com/iotaledger/hive.go/db"
 	"github.com/iotaledger/hive.go/kvstore"
-	hivedb "github.com/iotaledger/hive.go/kvstore/database"
 	"github.com/iotaledger/hive.go/logger"
 	iotago "github.com/iotaledger/iota.go/v3"
 	"github.com/nnikolash/wasp-types-exported/packages/chain"

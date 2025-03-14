@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	hivedb "github.com/iotaledger/hive.go/kvstore/database"
+	hivedb "github.com/iotaledger/hive.go/db"
 	iotago "github.com/iotaledger/iota.go/v3"
 	"github.com/iotaledger/iota.go/v3/tpkg"
 	"github.com/nnikolash/wasp-types-exported/packages/cryptolib"

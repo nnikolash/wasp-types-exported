@@ -21,7 +21,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/samber/lo"
 
-	hivedb "github.com/iotaledger/hive.go/kvstore/database"
+	hivedb "github.com/iotaledger/hive.go/db"
 	"github.com/iotaledger/hive.go/logger"
 	"github.com/iotaledger/hive.go/runtime/event"
 	"github.com/nnikolash/wasp-types-exported/packages/evm/evmtypes"

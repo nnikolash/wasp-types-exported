@@ -12,7 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/eth/tracers"
 
-	hivedb "github.com/iotaledger/hive.go/kvstore/database"
+	hivedb "github.com/iotaledger/hive.go/db"
 	"github.com/nnikolash/wasp-types-exported/packages/chain"
 	"github.com/nnikolash/wasp-types-exported/packages/chainutil"
 	"github.com/nnikolash/wasp-types-exported/packages/evm/jsonrpc"

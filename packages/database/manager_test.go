@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	hivedb "github.com/iotaledger/hive.go/db"
 	"github.com/iotaledger/hive.go/kvstore"
-	hivedb "github.com/iotaledger/hive.go/kvstore/database"
 	"github.com/nnikolash/wasp-types-exported/packages/isc"
 	"github.com/nnikolash/wasp-types-exported/packages/isc/coreutil"
 	"github.com/nnikolash/wasp-types-exported/packages/kv"
