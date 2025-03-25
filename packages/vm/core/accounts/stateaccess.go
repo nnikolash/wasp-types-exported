@@ -50,7 +50,7 @@ func AgentIDFromKey(key kv.Key, chainID isc.ChainID) (isc.AgentID, error) {
 			copy(ethAddr[:], []byte(key))
 			return isc.NewEthereumAddressAgentID(chainID, ethAddr), nil
 		default:
-			panic(fmt.Sprintf("bad key length: %d: %v / %x", len(key), string(key), key))
+			return nil, fmt.Errorf("bad key length: %d: %v / %x", len(key), string(key), key)
 		}
 	}
 	return codec.DecodeAgentID([]byte(key))
